@@ -8,11 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RestaurantOrders.Domain\RestaurantOrders.Domain.csproj" />
+    <ProjectReference Include="..\RestaurantOrders.Application\RestaurantOrders.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="supabase-csharp" Version="0.2.0" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
   </ItemGroup>

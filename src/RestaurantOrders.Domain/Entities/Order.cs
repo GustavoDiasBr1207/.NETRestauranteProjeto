@@ -62,7 +62,7 @@ public class Order : BaseEntity
             _items.Add(OrderItem.Create(Id, menuItem, quantity, notes));
 
         RecalculateTotal();
-        RaiseDomainEvent(new OrderItemAddedEvent(Id, menuItem.Id, quantity));
+        AddDomainEvent(new OrderItemAddedEvent(Id, menuItem.Id, quantity));
     }
 
     public void RemoveItem(Guid orderItemId)
@@ -95,7 +95,7 @@ public class Order : BaseEntity
         Status   = OrderStatusEnum.Pending;
         PlacedAt = DateTime.UtcNow;
 
-        RaiseDomainEvent(new OrderPlacedEvent(Id, RestaurantId, TableId, TotalAmount));
+        AddDomainEvent(new OrderPlacedEvent(Id, RestaurantId, TableId, TotalAmount));
     }
 
     /// <summary>Cozinha confirma que recebeu o pedido.</summary>
@@ -104,7 +104,7 @@ public class Order : BaseEntity
         EnsureStatus(OrderStatusEnum.Pending, "confirmar");
         Status      = OrderStatusEnum.Confirmed;
         ConfirmedAt = DateTime.UtcNow;
-        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Pending, OrderStatusEnum.Confirmed));
+        AddDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Pending, OrderStatusEnum.Confirmed));
     }
 
     /// <summary>Cozinha começa a preparar.</summary>
@@ -112,7 +112,7 @@ public class Order : BaseEntity
     {
         EnsureStatus(OrderStatusEnum.Confirmed, "iniciar preparo");
         Status = OrderStatusEnum.Preparing;
-        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Confirmed, OrderStatusEnum.Preparing));
+        AddDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Confirmed, OrderStatusEnum.Preparing));
     }
 
     /// <summary>Cozinha marca como pronto para retirada/entrega.</summary>
@@ -121,7 +121,7 @@ public class Order : BaseEntity
         EnsureStatus(OrderStatusEnum.Preparing, "marcar como pronto");
         Status  = OrderStatusEnum.Ready;
         ReadyAt = DateTime.UtcNow;
-        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Preparing, OrderStatusEnum.Ready));
+        AddDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Preparing, OrderStatusEnum.Ready));
     }
 
     /// <summary>Garçom entrega na mesa.</summary>
@@ -130,7 +130,7 @@ public class Order : BaseEntity
         EnsureStatus(OrderStatusEnum.Ready, "entregar");
         Status      = OrderStatusEnum.Delivered;
         DeliveredAt = DateTime.UtcNow;
-        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Ready, OrderStatusEnum.Delivered));
+        AddDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Ready, OrderStatusEnum.Delivered));
     }
 
     /// <summary>Cancela o pedido (apenas enquanto não entregue).</summary>
@@ -141,7 +141,7 @@ public class Order : BaseEntity
 
         var previous = Status;
         Status = OrderStatusEnum.Cancelled;
-        RaiseDomainEvent(new OrderStatusChangedEvent(Id, previous, OrderStatusEnum.Cancelled));
+        AddDomainEvent(new OrderStatusChangedEvent(Id, previous, OrderStatusEnum.Cancelled));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

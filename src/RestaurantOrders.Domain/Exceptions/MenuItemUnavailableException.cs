@@ -1,3 +1,5 @@
+using System;
+
 namespace RestaurantOrders.Domain.Exceptions;
 
 /// <summary>
@@ -5,5 +7,9 @@ namespace RestaurantOrders.Domain.Exceptions;
 /// </summary>
 public class MenuItemUnavailableException : DomainException
 {
-    public MenuItemUnavailableException(string message) : base(message) { }
+    public MenuItemUnavailableException(string message)
+        : base(message) { }
+
+    public MenuItemUnavailableException(Guid menuItemId)
+        : base($"MenuItem '{menuItemId}' está indisponível no momento.") { }
 }
