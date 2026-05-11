@@ -1,30 +1,57 @@
-namespace RestaurantOrders.Domain.Entities;
-
 using RestaurantOrders.Domain.Common;
 using RestaurantOrders.Domain.ValueObjects;
 
-/// <summary>
-/// Menu item entity
-/// </summary>
+namespace RestaurantOrders.Domain.Entities;
+
 public class MenuItem : BaseEntity
 {
-    public Guid CategoryId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public Money Price { get; set; } = null!;
-    public string? ImageUrl { get; set; }
-    public bool IsAvailable { get; set; }
-    
-    public static MenuItem Create(Guid categoryId, string name, string description, Money price, string? imageUrl = null)
+    public Guid   RestaurantId { get; private set; }
+    public Guid   CategoryId   { get; private set; }
+    public string Name         { get; private set; } = string.Empty;
+    public string? Description { get; private set; }
+    public Money  Price        { get; private set; } = null!;
+    public string? ImageUrl    { get; private set; }
+    public bool   IsAvailable  { get; private set; } = true;
+    public int    DisplayOrder { get; private set; }
+
+    // Navigation
+    public MenuCategory? Category    { get; private set; }
+    public Restaurant?   Restaurant  { get; private set; }
+
+    private MenuItem() { } // EF Core
+
+    public static MenuItem Create(
+        Guid   restaurantId,
+        Guid   categoryId,
+        string name,
+        Money  price,
+        string? description  = null,
+        string? imageUrl     = null,
+        int     displayOrder = 0)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
         return new MenuItem
         {
-            CategoryId = categoryId,
-            Name = name ?? throw new ArgumentNullException(nameof(name)),
-            Description = description ?? string.Empty,
-            Price = price ?? throw new ArgumentNullException(nameof(price)),
-            ImageUrl = imageUrl,
-            IsAvailable = true
+            RestaurantId = restaurantId,
+            CategoryId   = categoryId,
+            Name         = name.Trim(),
+            Price        = price,
+            Description  = description?.Trim(),
+            ImageUrl     = imageUrl,
+            DisplayOrder = displayOrder
         };
     }
+
+    public void Update(string name, Money price, string? description, string? imageUrl, int displayOrder)
+    {
+        Name         = name.Trim();
+        Price        = price;
+        Description  = description?.Trim();
+        ImageUrl     = imageUrl;
+        DisplayOrder = displayOrder;
+    }
+
+    public void MakeAvailable()   => IsAvailable = true;
+    public void MakeUnavailable() => IsAvailable = false;
 }

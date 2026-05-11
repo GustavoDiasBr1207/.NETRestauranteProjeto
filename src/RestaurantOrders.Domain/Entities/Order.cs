@@ -1,153 +1,158 @@
-namespace RestaurantOrders.Domain.Entities;
-
 using RestaurantOrders.Domain.Common;
 using RestaurantOrders.Domain.Enums;
 using RestaurantOrders.Domain.Events;
 using RestaurantOrders.Domain.Exceptions;
 using RestaurantOrders.Domain.ValueObjects;
 
-/// <summary>
-/// Order aggregate root - contains all business logic for order operations
-/// </summary>
+namespace RestaurantOrders.Domain.Entities;
+
 public class Order : BaseEntity
 {
-    public Guid RestaurantId { get; set; }
-    public Guid TableId { get; set; }
-    public Guid? CustomerId { get; set; }
-    public OrderStatusEnum Status { get; private set; }
-    public Money TotalAmount { get; private set; } = null!;
-    public DateTime? SubmittedAt { get; private set; }
-    
-    private readonly List<OrderItem> _items = new();
-    public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
-    
-    public static Order Create(Guid restaurantId, Guid tableId, Guid? customerId = null)
+    public Guid             RestaurantId { get; private set; }
+    public Guid             TableId      { get; private set; }
+    public Guid?            CustomerId   { get; private set; }
+    public OrderStatusEnum  Status       { get; private set; }
+    public Money            TotalAmount  { get; private set; } = null!;
+    public string?          Notes        { get; private set; }
+    public DateTime?        PlacedAt     { get; private set; }
+    public DateTime?        ConfirmedAt  { get; private set; }
+    public DateTime?        ReadyAt      { get; private set; }
+    public DateTime?        DeliveredAt  { get; private set; }
+
+    // Navigations
+    public Table?      Table      { get; private set; }
+    public Restaurant? Restaurant { get; private set; }
+    public Customer?   Customer   { get; private set; }
+
+    private readonly List<OrderItem> _items = [];
+    public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+
+    private Order() { } // EF Core
+
+    // ── Factory ──────────────────────────────────────────────────────────────
+
+    public static Order Create(Guid restaurantId, Guid tableId, Guid? customerId = null, string? notes = null)
     {
         var order = new Order
         {
             RestaurantId = restaurantId,
-            TableId = tableId,
-            CustomerId = customerId,
-            Status = OrderStatusEnum.Draft,
-            TotalAmount = new Money(0)
+            TableId      = tableId,
+            CustomerId   = customerId,
+            Notes        = notes?.Trim(),
+            Status       = OrderStatusEnum.Draft,
+            TotalAmount  = Money.Zero()
         };
-        
-        order.AddDomainEvent(new OrderPlacedEvent(order.Id, restaurantId, tableId, order.TotalAmount));
-        
+
         return order;
     }
-    
+
+    // ── Itens ─────────────────────────────────────────────────────────────────
+
     public void AddItem(MenuItem menuItem, int quantity, string? notes = null)
     {
-        if (menuItem == null)
-            throw new ArgumentNullException(nameof(menuItem));
-        
-        if (quantity <= 0)
-            throw new ArgumentException("Quantity must be greater than 0", nameof(quantity));
-        
+        EnsureStatus(OrderStatusEnum.Draft, "adicionar itens");
+
         if (!menuItem.IsAvailable)
-            throw new MenuItemUnavailableException($"Menu item '{menuItem.Name}' is not available");
-        
-        if (Status != OrderStatusEnum.Draft)
-            throw new InvalidOrderStatusException($"Cannot add item to order in '{Status}' status");
-        
-        var existingItem = _items.FirstOrDefault(i => i.MenuItemId == menuItem.Id);
-        
-        if (existingItem != null)
-        {
-            existingItem.UpdateQuantity(quantity);
-        }
+            throw new MenuItemUnavailableException(menuItem.Id);
+
+        var existing = _items.FirstOrDefault(i => i.MenuItemId == menuItem.Id);
+        if (existing is not null)
+            existing.UpdateQuantity(existing.Quantity + quantity);
         else
-        {
-            var orderItem = OrderItem.Create(menuItem.Id, menuItem.Price, quantity, notes);
-            _items.Add(orderItem);
-        }
-        
-        CalculateTotalAmount();
-        
-        this.AddDomainEvent(new OrderItemAddedEvent(this.Id, menuItem.Id, quantity));
+            _items.Add(OrderItem.Create(Id, menuItem, quantity, notes));
+
+        RecalculateTotal();
+        RaiseDomainEvent(new OrderItemAddedEvent(Id, menuItem.Id, quantity));
     }
-    
+
     public void RemoveItem(Guid orderItemId)
     {
-        if (Status != OrderStatusEnum.Draft)
-            throw new InvalidOrderStatusException($"Cannot remove item from order in '{Status}' status");
-        
-        var item = _items.FirstOrDefault(i => i.Id == orderItemId);
-        if (item == null)
-            throw new NotFoundException($"Order item with id '{orderItemId}' not found");
-        
+        EnsureStatus(OrderStatusEnum.Draft, "remover itens");
+
+        var item = _items.FirstOrDefault(i => i.Id == orderItemId)
+            ?? throw new DomainException($"Item '{orderItemId}' não encontrado no pedido.");
+
         _items.Remove(item);
-        CalculateTotalAmount();
+        RecalculateTotal();
     }
-    
+
+    public void UpdateNotes(string? notes)
+    {
+        EnsureStatus(OrderStatusEnum.Draft, "atualizar observações");
+        Notes = notes?.Trim();
+    }
+
+    // ── Transições de status ──────────────────────────────────────────────────
+
+    /// <summary>Cliente envia o pedido para a cozinha.</summary>
     public void Submit()
     {
-        if (Status != OrderStatusEnum.Draft)
-            throw new InvalidOrderStatusException($"Cannot submit order in '{Status}' status");
-        
+        EnsureStatus(OrderStatusEnum.Draft, "enviar");
+
         if (_items.Count == 0)
-            throw new InvalidOrderStatusException("Cannot submit order without items");
-        
-        Status = OrderStatusEnum.Pending;
-        SubmittedAt = DateTime.UtcNow;
-        
-        this.AddDomainEvent(new OrderStatusChangedEvent(this.Id, OrderStatusEnum.Draft, OrderStatusEnum.Pending));
+            throw new DomainException("O pedido precisa ter ao menos um item antes de ser enviado.");
+
+        Status   = OrderStatusEnum.Pending;
+        PlacedAt = DateTime.UtcNow;
+
+        RaiseDomainEvent(new OrderPlacedEvent(Id, RestaurantId, TableId, TotalAmount));
     }
-    
+
+    /// <summary>Cozinha confirma que recebeu o pedido.</summary>
     public void Confirm()
     {
-        if (Status != OrderStatusEnum.Pending)
-            throw new InvalidOrderStatusException($"Cannot confirm order from '{Status}' status");
-        
-        Status = OrderStatusEnum.Confirmed;
-        
-        this.AddDomainEvent(new OrderStatusChangedEvent(this.Id, OrderStatusEnum.Pending, OrderStatusEnum.Confirmed));
+        EnsureStatus(OrderStatusEnum.Pending, "confirmar");
+        Status      = OrderStatusEnum.Confirmed;
+        ConfirmedAt = DateTime.UtcNow;
+        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Pending, OrderStatusEnum.Confirmed));
     }
-    
-    public void MarkAsReady()
+
+    /// <summary>Cozinha começa a preparar.</summary>
+    public void StartPreparing()
     {
-        if (Status != OrderStatusEnum.Preparing)
-            throw new InvalidOrderStatusException($"Cannot mark order as ready from '{Status}' status");
-        
-        Status = OrderStatusEnum.Ready;
-        
-        this.AddDomainEvent(new OrderStatusChangedEvent(this.Id, OrderStatusEnum.Preparing, OrderStatusEnum.Ready));
+        EnsureStatus(OrderStatusEnum.Confirmed, "iniciar preparo");
+        Status = OrderStatusEnum.Preparing;
+        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Confirmed, OrderStatusEnum.Preparing));
     }
-    
+
+    /// <summary>Cozinha marca como pronto para retirada/entrega.</summary>
+    public void MarkReady()
+    {
+        EnsureStatus(OrderStatusEnum.Preparing, "marcar como pronto");
+        Status  = OrderStatusEnum.Ready;
+        ReadyAt = DateTime.UtcNow;
+        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Preparing, OrderStatusEnum.Ready));
+    }
+
+    /// <summary>Garçom entrega na mesa.</summary>
     public void Deliver()
     {
-        if (Status != OrderStatusEnum.Ready)
-            throw new InvalidOrderStatusException($"Cannot deliver order from '{Status}' status");
-        
-        Status = OrderStatusEnum.Delivered;
-        
-        this.AddDomainEvent(new OrderStatusChangedEvent(this.Id, OrderStatusEnum.Ready, OrderStatusEnum.Delivered));
+        EnsureStatus(OrderStatusEnum.Ready, "entregar");
+        Status      = OrderStatusEnum.Delivered;
+        DeliveredAt = DateTime.UtcNow;
+        RaiseDomainEvent(new OrderStatusChangedEvent(Id, OrderStatusEnum.Ready, OrderStatusEnum.Delivered));
     }
-    
+
+    /// <summary>Cancela o pedido (apenas enquanto não entregue).</summary>
     public void Cancel()
     {
-        if (Status == OrderStatusEnum.Delivered || Status == OrderStatusEnum.Cancelled)
-            throw new InvalidOrderStatusException($"Cannot cancel order in '{Status}' status");
-        
-        var previousStatus = Status;
+        if (Status is OrderStatusEnum.Delivered or OrderStatusEnum.Cancelled)
+            throw new InvalidOrderStatusException(Status, OrderStatusEnum.Cancelled);
+
+        var previous = Status;
         Status = OrderStatusEnum.Cancelled;
-        
-        this.AddDomainEvent(new OrderStatusChangedEvent(this.Id, previousStatus, OrderStatusEnum.Cancelled));
+        RaiseDomainEvent(new OrderStatusChangedEvent(Id, previous, OrderStatusEnum.Cancelled));
     }
-    
-    private void CalculateTotalAmount()
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private void RecalculateTotal() =>
+        TotalAmount = _items.Aggregate(Money.Zero(), (acc, i) => acc + i.Subtotal);
+
+    private void EnsureStatus(OrderStatusEnum expected, string action)
     {
-        if (_items.Count == 0)
-        {
-            TotalAmount = new Money(0);
-            return;
-        }
-        
-        var total = _items
-            .Select(item => new Money(item.Subtotal.Amount, item.Subtotal.Currency))
-            .Aggregate((acc, item) => acc + item);
-        
-        TotalAmount = total;
+        if (Status != expected)
+            throw new DomainException(
+                $"Não é possível {action} um pedido com status '{Status}'. Status esperado: '{expected}'.");
     }
 }

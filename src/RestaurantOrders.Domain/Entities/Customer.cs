@@ -1,21 +1,24 @@
-namespace RestaurantOrders.Domain.Entities;
-
 using RestaurantOrders.Domain.Common;
 
-/// <summary>
-/// Customer entity
-/// </summary>
+namespace RestaurantOrders.Domain.Entities;
+
 public class Customer : BaseEntity
 {
-    public string Name { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-    
-    public static Customer Create(string name, string phone)
-    {
-        return new Customer
+    public string? Name  { get; private set; }
+    public string? Phone { get; private set; }
+
+    private Customer() { } // EF Core
+
+    public static Customer Create(string? name = null, string? phone = null) =>
+        new Customer
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name)),
-            Phone = phone ?? throw new ArgumentNullException(nameof(phone))
+            Name  = name?.Trim(),
+            Phone = phone?.Trim()
         };
+
+    public void Update(string? name, string? phone)
+    {
+        Name  = name?.Trim();
+        Phone = phone?.Trim();
     }
 }
