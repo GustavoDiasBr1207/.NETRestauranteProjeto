@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "8dVn2nuCB+c=",
+  "success": true,
+  "projectFilePath": "/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Application/RestaurantOrders.Application.csproj",
+  "expectedPackageFiles": [
+    "/home/gustavodias/.nuget/packages/automapper/12.0.0/automapper.12.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.0/automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/fluentvalidation/11.7.0/fluentvalidation.11.7.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.7.0/fluentvalidation.dependencyinjectionextensions.11.7.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/mediatr/12.0.1/mediatr.12.0.1.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/6.0.0/microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.extensions.options/6.0.0/microsoft.extensions.options.6.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.extensions.primitives/6.0.0/microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.netcore.app.ref/8.0.26/microsoft.netcore.app.ref.8.0.26.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.26/microsoft.aspnetcore.app.ref.8.0.26.nupkg.sha512"
+  ],
+  "logs": []
+}

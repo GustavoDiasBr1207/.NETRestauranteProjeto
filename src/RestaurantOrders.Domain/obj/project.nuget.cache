@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Q63jK6VSCEE=",
+  "success": true,
+  "projectFilePath": "/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/RestaurantOrders.Domain.csproj",
+  "expectedPackageFiles": [
+    "/home/gustavodias/.nuget/packages/microsoft.netcore.app.ref/8.0.26/microsoft.netcore.app.ref.8.0.26.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.26/microsoft.aspnetcore.app.ref.8.0.26.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,12 @@
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/bin/Debug/net8.0/RestaurantOrders.Domain.deps.json
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/bin/Debug/net8.0/RestaurantOrders.Domain.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/bin/Debug/net8.0/RestaurantOrders.Domain.pdb
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.AssemblyInfoInputs.cache
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.AssemblyInfo.cs
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.csproj.CoreCompileInputs.cache
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.sourcelink.json
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/refint/RestaurantOrders.Domain.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.pdb
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/ref/RestaurantOrders.Domain.dll

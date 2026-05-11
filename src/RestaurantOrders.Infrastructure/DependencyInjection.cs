@@ -1,6 +1,7 @@
 namespace RestaurantOrders.Infrastructure;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using RestaurantOrders.Infrastructure.Persistence;
 using RestaurantOrders.Infrastructure.Persistence.Repositories;
@@ -10,28 +11,38 @@ using RestaurantOrders.Infrastructure.Storage;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 using RestaurantOrders.Domain.Interfaces.Services;
 
-/// <summary>
-/// Dependency injection configuration for Infrastructure layer
-/// </summary>
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        // Register DbContext
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString));
-        
-        // Register Repositories
+        {
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 3,
+                    maxRetryDelay: TimeSpan.FromSeconds(5),
+                    errorCodesToAdd: null);
+                npgsqlOptions.CommandTimeout(30);
+            });
+        });
+
+        // Repositories
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IMenuRepository, MenuRepository>();
         services.AddScoped<ITableRepository, TableRepository>();
         services.AddScoped<IRestaurantRepository, RestaurantRepository>();
-        
-        // Register Services
+
+        // Services
         services.AddScoped<INotificationService, SupabaseNotificationService>();
         services.AddScoped<IQrCodeService, QrCodeService>();
         services.AddScoped<IStorageService, SupabaseStorageService>();
-        
+
         return services;
     }
 }

@@ -1,0 +1,6 @@
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.csproj.AssemblyReference.cache
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.AssemblyInfoInputs.cache
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.AssemblyInfo.cs
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.csproj.CoreCompileInputs.cache
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.sourcelink.json
