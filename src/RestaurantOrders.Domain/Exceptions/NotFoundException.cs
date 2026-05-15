@@ -1,8 +1,6 @@
 namespace RestaurantOrders.Domain.Exceptions;
 
-/// <summary>
-/// Exception raised when an entity is not found
-/// </summary>
+/// <summary>Lançada quando uma entidade buscada não existe no repositório.</summary>
 public class NotFoundException : DomainException
 {
     public NotFoundException(string message) : base(message) { }

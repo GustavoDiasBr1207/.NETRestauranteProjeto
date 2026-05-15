@@ -1,9 +1,9 @@
 namespace RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus;
 
 using MediatR;
-using RestaurantOrders.Domain.Interfaces.Repositories;
 using RestaurantOrders.Domain.Enums;
 using RestaurantOrders.Domain.Exceptions;
+using RestaurantOrders.Domain.Interfaces.Repositories;
 
 public class UpdateOrderStatusCommandHandler(IOrderRepository orderRepository)
     : IRequestHandler<UpdateOrderStatusCommand>
@@ -15,13 +15,14 @@ public class UpdateOrderStatusCommandHandler(IOrderRepository orderRepository)
 
         switch (request.NewStatus)
         {
-            case OrderStatusEnum.Confirmed:  order.Confirm();         break;
-            case OrderStatusEnum.Preparing:  order.StartPreparing();  break;
-            case OrderStatusEnum.Ready:      order.MarkReady();       break;
-            case OrderStatusEnum.Delivered:  order.Deliver();         break;
-            case OrderStatusEnum.Cancelled:  order.Cancel();          break;
+            case OrderStatusEnum.Confirmed: order.Confirm();        break;
+            case OrderStatusEnum.Preparing: order.StartPreparing(); break;
+            case OrderStatusEnum.Ready:     order.MarkReady();      break;
+            case OrderStatusEnum.Delivered: order.Deliver();        break;
+            case OrderStatusEnum.Cancelled: order.Cancel();         break;
             default:
-                throw new InvalidOrderStatusException($"Transição para '{request.NewStatus}' não é suportada via este endpoint.");
+                throw new InvalidOrderStatusException(
+                    $"Transição para '{request.NewStatus}' não é suportada via este endpoint.");
         }
 
         await orderRepository.UpdateAsync(order, ct);

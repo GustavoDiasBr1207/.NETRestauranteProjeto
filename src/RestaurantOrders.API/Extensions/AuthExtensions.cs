@@ -13,11 +13,11 @@ public static class AuthExtensions
 
         var jwtSecret = configuration["Supabase:JwtSecret"];
 
-        var builder = services
+        services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                // Opção 1 — OIDC discovery via Supabase (requer Supabase:Url configurado)
+                // Opção 1 — validação via OIDC discovery do Supabase (padrão)
                 options.Authority = $"{supabaseUrl}/auth/v1";
                 options.Audience  = "authenticated";
 
@@ -29,7 +29,7 @@ public static class AuthExtensions
                     ValidateIssuerSigningKey = true,
                 };
 
-                // Opção 2 — validação direta pelo JWT Secret (descomente se preferir)
+                // Opção 2 — validação direta pelo JWT Secret do Supabase (descomente se preferir)
                 // if (!string.IsNullOrEmpty(jwtSecret))
                 // {
                 //     options.Authority = null;
@@ -42,7 +42,7 @@ public static class AuthExtensions
                 //     };
                 // }
 
-                options.RequireHttpsMetadata = false; // true em produção
+                options.RequireHttpsMetadata = false; // defina true em produção
             });
 
         services.AddAuthorization();

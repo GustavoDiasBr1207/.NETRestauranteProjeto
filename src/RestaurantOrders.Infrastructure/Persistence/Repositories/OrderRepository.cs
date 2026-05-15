@@ -31,25 +31,21 @@ public class OrderRepository(ApplicationDbContext context) : IOrderRepository
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync(ct);
 
-    public async Task AddAsync(Order order, CancellationToken ct = default)
-    {
-        await context.Orders.AddAsync(order, ct);
-        await context.SaveChangesAsync(ct);
-    }
+    // Métodos de escrita apenas rastreiam mudanças — commit é feito pelo TransactionBehavior via IUnitOfWork
 
-    public async Task UpdateAsync(Order order, CancellationToken ct = default)
+    public async Task AddAsync(Order order, CancellationToken ct = default)
+        => await context.Orders.AddAsync(order, ct);
+
+    public Task UpdateAsync(Order order, CancellationToken ct = default)
     {
         context.Orders.Update(order);
-        await context.SaveChangesAsync(ct);
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(Guid orderId, CancellationToken ct = default)
     {
         var order = await context.Orders.FindAsync([orderId], ct);
         if (order is not null)
-        {
             context.Orders.Remove(order);
-            await context.SaveChangesAsync(ct);
-        }
     }
 }

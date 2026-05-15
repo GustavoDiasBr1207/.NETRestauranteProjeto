@@ -19,15 +19,14 @@ public class RestaurantRepository(ApplicationDbContext context) : IRestaurantRep
             .OrderBy(r => r.Name)
             .ToListAsync(ct);
 
-    public async Task AddAsync(Restaurant restaurant, CancellationToken ct = default)
-    {
-        await context.Restaurants.AddAsync(restaurant, ct);
-        await context.SaveChangesAsync(ct);
-    }
+    // Métodos de escrita apenas rastreiam mudanças — commit é feito pelo TransactionBehavior via IUnitOfWork
 
-    public async Task UpdateAsync(Restaurant restaurant, CancellationToken ct = default)
+    public async Task AddAsync(Restaurant restaurant, CancellationToken ct = default)
+        => await context.Restaurants.AddAsync(restaurant, ct);
+
+    public Task UpdateAsync(Restaurant restaurant, CancellationToken ct = default)
     {
         context.Restaurants.Update(restaurant);
-        await context.SaveChangesAsync(ct);
+        return Task.CompletedTask;
     }
 }

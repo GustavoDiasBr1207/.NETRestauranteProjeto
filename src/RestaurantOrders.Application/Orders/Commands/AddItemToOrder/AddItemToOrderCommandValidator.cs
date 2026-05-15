@@ -2,23 +2,20 @@ namespace RestaurantOrders.Application.Orders.Commands.AddItemToOrder;
 
 using FluentValidation;
 
-/// <summary>
-/// Validator for AddItemToOrderCommand
-/// </summary>
 public class AddItemToOrderCommandValidator : AbstractValidator<AddItemToOrderCommand>
 {
     public AddItemToOrderCommandValidator()
     {
         RuleFor(x => x.OrderId)
             .NotEmpty()
-            .WithMessage("OrderId is required");
-        
+            .WithMessage("O ID do pedido é obrigatório.");
+
         RuleFor(x => x.MenuItemId)
             .NotEmpty()
-            .WithMessage("MenuItemId is required");
-        
+            .WithMessage("O ID do item de cardápio é obrigatório.");
+
         RuleFor(x => x.Quantity)
             .GreaterThan(0)
-            .WithMessage("Quantity must be greater than 0");
+            .WithMessage("A quantidade deve ser maior que zero.");
     }
 }

@@ -1,28 +1,18 @@
 namespace RestaurantOrders.Application.Orders.Commands.RemoveItemFromOrder;
 
 using MediatR;
-using RestaurantOrders.Domain.Interfaces.Repositories;
 using RestaurantOrders.Domain.Exceptions;
+using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Handler for RemoveItemFromOrderCommand
-/// </summary>
-public class RemoveItemFromOrderCommandHandler : IRequestHandler<RemoveItemFromOrderCommand>
+public class RemoveItemFromOrderCommandHandler(IOrderRepository orderRepository)
+    : IRequestHandler<RemoveItemFromOrderCommand>
 {
-    private readonly IOrderRepository _orderRepository;
-    
-    public RemoveItemFromOrderCommandHandler(IOrderRepository orderRepository)
+    public async Task Handle(RemoveItemFromOrderCommand request, CancellationToken ct)
     {
-        _orderRepository = orderRepository;
-    }
-    
-    public async Task Handle(RemoveItemFromOrderCommand request, CancellationToken cancellationToken)
-    {
-        // TODO: Implement logic to remove item from order
-        var order = await _orderRepository.GetByIdWithItemsAsync(request.OrderId, cancellationToken)
-            ?? throw new NotFoundException($"Order with id '{request.OrderId}' not found");
-        
+        var order = await orderRepository.GetByIdWithItemsAsync(request.OrderId, ct)
+            ?? throw new NotFoundException($"Pedido '{request.OrderId}' não encontrado.");
+
         order.RemoveItem(request.OrderItemId);
-        await _orderRepository.UpdateAsync(order, cancellationToken);
+        await orderRepository.UpdateAsync(order, ct);
     }
 }

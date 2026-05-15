@@ -2,19 +2,16 @@ namespace RestaurantOrders.Application.Orders.Commands.RemoveItemFromOrder;
 
 using FluentValidation;
 
-/// <summary>
-/// Validator for RemoveItemFromOrderCommand
-/// </summary>
 public class RemoveItemFromOrderCommandValidator : AbstractValidator<RemoveItemFromOrderCommand>
 {
     public RemoveItemFromOrderCommandValidator()
     {
         RuleFor(x => x.OrderId)
             .NotEmpty()
-            .WithMessage("OrderId is required");
-        
+            .WithMessage("O ID do pedido é obrigatório.");
+
         RuleFor(x => x.OrderItemId)
             .NotEmpty()
-            .WithMessage("OrderItemId is required");
+            .WithMessage("O ID do item do pedido é obrigatório.");
     }
 }

@@ -10,9 +10,18 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddSwagger();
 builder.Services.AddAuth(builder.Configuration);
+
 builder.Services.AddCors(options =>
-    options.AddPolicy("AllowAll", p =>
-        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+        if (origins is { Length: > 0 })
+            policy.WithOrigins(origins).AllowAnyMethod().AllowAnyHeader();
+        else
+            // Em desenvolvimento, sem origens configuradas, permite qualquer origem
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    }));
 
 var app = builder.Build();
 
@@ -23,7 +32,7 @@ app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseSwaggerWithUI();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

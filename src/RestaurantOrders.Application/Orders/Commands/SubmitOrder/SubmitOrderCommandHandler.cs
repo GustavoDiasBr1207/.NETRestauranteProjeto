@@ -1,34 +1,20 @@
 namespace RestaurantOrders.Application.Orders.Commands.SubmitOrder;
 
 using MediatR;
-using RestaurantOrders.Domain.Interfaces.Repositories;
-using RestaurantOrders.Domain.Interfaces.Services;
 using RestaurantOrders.Domain.Exceptions;
+using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Handler for SubmitOrderCommand
-/// </summary>
-public class SubmitOrderCommandHandler : IRequestHandler<SubmitOrderCommand>
+public class SubmitOrderCommandHandler(IOrderRepository orderRepository)
+    : IRequestHandler<SubmitOrderCommand>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly INotificationService _notificationService;
-    
-    public SubmitOrderCommandHandler(IOrderRepository orderRepository, INotificationService notificationService)
+    public async Task Handle(SubmitOrderCommand request, CancellationToken ct)
     {
-        _orderRepository = orderRepository;
-        _notificationService = notificationService;
-    }
-    
-    public async Task Handle(SubmitOrderCommand request, CancellationToken cancellationToken)
-    {
-        // TODO: Implement logic to submit order
-        var order = await _orderRepository.GetByIdWithItemsAsync(request.OrderId, cancellationToken)
-            ?? throw new NotFoundException($"Order with id '{request.OrderId}' not found");
-        
+        var order = await orderRepository.GetByIdWithItemsAsync(request.OrderId, ct)
+            ?? throw new NotFoundException($"Pedido '{request.OrderId}' não encontrado.");
+
+        // order.Submit() publica OrderPlacedEvent — a notificação à cozinha é
+        // tratada pelo OrderPlacedEventHandler, despachado pelo SaveChangesAsync.
         order.Submit();
-        await _orderRepository.UpdateAsync(order, cancellationToken);
-        
-        // Notify kitchen
-        await _notificationService.NotifyKitchenAsync(order.RestaurantId, order.Id, cancellationToken);
+        await orderRepository.UpdateAsync(order, ct);
     }
 }

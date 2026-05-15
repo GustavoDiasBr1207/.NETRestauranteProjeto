@@ -2,23 +2,20 @@ namespace RestaurantOrders.Application.Menu.Commands.CreateMenuItem;
 
 using FluentValidation;
 
-/// <summary>
-/// Validator for CreateMenuItemCommand
-/// </summary>
 public class CreateMenuItemCommandValidator : AbstractValidator<CreateMenuItemCommand>
 {
     public CreateMenuItemCommandValidator()
     {
         RuleFor(x => x.CategoryId)
             .NotEmpty()
-            .WithMessage("CategoryId is required");
-        
+            .WithMessage("O ID da categoria é obrigatório.");
+
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Name is required");
-        
+            .WithMessage("O nome do item é obrigatório.");
+
         RuleFor(x => x.Price)
             .GreaterThan(0)
-            .WithMessage("Price must be greater than 0");
+            .WithMessage("O preço deve ser maior que zero.");
     }
 }

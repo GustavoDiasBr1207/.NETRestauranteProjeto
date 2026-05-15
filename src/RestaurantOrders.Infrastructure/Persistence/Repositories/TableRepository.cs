@@ -19,15 +19,14 @@ public class TableRepository(ApplicationDbContext context) : ITableRepository
             .OrderBy(t => t.Number)
             .ToListAsync(ct);
 
-    public async Task AddAsync(Table table, CancellationToken ct = default)
-    {
-        await context.Tables.AddAsync(table, ct);
-        await context.SaveChangesAsync(ct);
-    }
+    // Métodos de escrita apenas rastreiam mudanças — commit é feito pelo TransactionBehavior via IUnitOfWork
 
-    public async Task UpdateAsync(Table table, CancellationToken ct = default)
+    public async Task AddAsync(Table table, CancellationToken ct = default)
+        => await context.Tables.AddAsync(table, ct);
+
+    public Task UpdateAsync(Table table, CancellationToken ct = default)
     {
         context.Tables.Update(table);
-        await context.SaveChangesAsync(ct);
+        return Task.CompletedTask;
     }
 }

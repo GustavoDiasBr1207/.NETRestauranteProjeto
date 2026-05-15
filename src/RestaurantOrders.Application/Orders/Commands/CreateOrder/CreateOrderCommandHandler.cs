@@ -2,26 +2,27 @@ namespace RestaurantOrders.Application.Orders.Commands.CreateOrder;
 
 using MediatR;
 using RestaurantOrders.Domain.Entities;
+using RestaurantOrders.Domain.Exceptions;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Handler for CreateOrderCommand
-/// </summary>
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
+public class CreateOrderCommandHandler(
+    IOrderRepository      orderRepository,
+    IRestaurantRepository restaurantRepository,
+    ITableRepository      tableRepository)
+    : IRequestHandler<CreateOrderCommand, Guid>
 {
-    private readonly IOrderRepository _orderRepository;
-    
-    public CreateOrderCommandHandler(IOrderRepository orderRepository)
+    public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken ct)
     {
-        _orderRepository = orderRepository;
-    }
-    
-    public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
-    {
-        // TODO: Implement logic to create order
+        // Valida existência das FKs antes de criar o pedido
+        _ = await restaurantRepository.GetByIdAsync(request.RestaurantId, ct)
+            ?? throw new NotFoundException($"Restaurante '{request.RestaurantId}' não encontrado.");
+
+        _ = await tableRepository.GetByIdAsync(request.TableId, ct)
+            ?? throw new NotFoundException($"Mesa '{request.TableId}' não encontrada.");
+
         var order = Order.Create(request.RestaurantId, request.TableId, request.CustomerId);
-        await _orderRepository.AddAsync(order, cancellationToken);
-        
+        await orderRepository.AddAsync(order, ct);
+
         return order.Id;
     }
 }

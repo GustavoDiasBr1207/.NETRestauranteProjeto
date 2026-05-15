@@ -1,28 +1,18 @@
 namespace RestaurantOrders.Application.Orders.Commands.CancelOrder;
 
 using MediatR;
-using RestaurantOrders.Domain.Interfaces.Repositories;
 using RestaurantOrders.Domain.Exceptions;
+using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Handler for CancelOrderCommand
-/// </summary>
-public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand>
+public class CancelOrderCommandHandler(IOrderRepository orderRepository)
+    : IRequestHandler<CancelOrderCommand>
 {
-    private readonly IOrderRepository _orderRepository;
-    
-    public CancelOrderCommandHandler(IOrderRepository orderRepository)
+    public async Task Handle(CancelOrderCommand request, CancellationToken ct)
     {
-        _orderRepository = orderRepository;
-    }
-    
-    public async Task Handle(CancelOrderCommand request, CancellationToken cancellationToken)
-    {
-        // TODO: Implement logic to cancel order
-        var order = await _orderRepository.GetByIdWithItemsAsync(request.OrderId, cancellationToken)
-            ?? throw new NotFoundException($"Order with id '{request.OrderId}' not found");
-        
+        var order = await orderRepository.GetByIdWithItemsAsync(request.OrderId, ct)
+            ?? throw new NotFoundException($"Pedido '{request.OrderId}' não encontrado.");
+
         order.Cancel();
-        await _orderRepository.UpdateAsync(order, cancellationToken);
+        await orderRepository.UpdateAsync(order, ct);
     }
 }

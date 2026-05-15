@@ -1,8 +1,8 @@
 namespace RestaurantOrders.Application.Common.Behaviors;
 
+using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
 public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>
@@ -10,14 +10,14 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
-        var name = typeof(TRequest).Name;
-        logger.LogInformation("Executando {Request}", name);
+        var nome = typeof(TRequest).Name;
+        logger.LogInformation("Executando {Request}", nome);
 
-        var sw = Stopwatch.StartNew();
+        var sw       = Stopwatch.StartNew();
         var response = await next();
         sw.Stop();
 
-        logger.LogInformation("{Request} concluído em {Ms}ms", name, sw.ElapsedMilliseconds);
+        logger.LogInformation("{Request} concluído em {Ms}ms", nome, sw.ElapsedMilliseconds);
         return response;
     }
 }

@@ -1,12 +1,13 @@
 namespace RestaurantOrders.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
-using RestaurantOrders.Domain.Entities;
-using RestaurantOrders.Domain.Common;
 using MediatR;
+using RestaurantOrders.Domain.Common;
+using RestaurantOrders.Domain.Entities;
+using RestaurantOrders.Domain.Interfaces;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IMediator? mediator = null)
-    : DbContext(options)
+    : DbContext(options), IUnitOfWork
 {
     public DbSet<Restaurant>   Restaurants    { get; set; } = null!;
     public DbSet<Table>        Tables         { get; set; } = null!;
@@ -22,6 +23,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 
+    /// <summary>
+    /// Ponto único de persistência: atualiza timestamps, despacha domain events e salva.
+    /// Chamado exclusivamente pelo <c>TransactionBehavior</c> ao final de cada command.
+    /// </summary>
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
         // Atualiza campos de auditoria automaticamente
@@ -34,7 +39,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 entry.Entity.UpdatedAt = DateTime.UtcNow;
         }
 
-        // Despacha domain events antes de persistir
+        // Coleta e limpa os events antes de publicar para evitar reentrada
         if (mediator is not null)
         {
             var entities = ChangeTracker
@@ -52,4 +57,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         return await base.SaveChangesAsync(ct);
     }
+
+    // IUnitOfWork — ponto de commit explícito chamado pelo TransactionBehavior
+    public Task<int> CommitAsync(CancellationToken ct = default) => SaveChangesAsync(ct);
 }

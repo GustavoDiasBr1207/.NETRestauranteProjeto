@@ -4,6 +4,20 @@
         <name>RestaurantOrders.Application</name>
     </assembly>
     <members>
+        <member name="T:RestaurantOrders.Application.Common.Behaviors.TransactionBehavior`2">
+            <summary>
+            Ponto único de commit: chama <see cref="M:RestaurantOrders.Domain.Interfaces.IUnitOfWork.CommitAsync(System.Threading.CancellationToken)"/> ao final de cada
+            command, garantindo atomicidade entre todos os repositórios do mesmo escopo.
+            Queries não geram mudanças rastreadas, então o commit é no-op para elas.
+            </summary>
+        </member>
+        <member name="M:RestaurantOrders.Application.Common.Behaviors.TransactionBehavior`2.#ctor(RestaurantOrders.Domain.Interfaces.IUnitOfWork)">
+            <summary>
+            Ponto único de commit: chama <see cref="M:RestaurantOrders.Domain.Interfaces.IUnitOfWork.CommitAsync(System.Threading.CancellationToken)"/> ao final de cada
+            command, garantindo atomicidade entre todos os repositórios do mesmo escopo.
+            Queries não geram mudanças rastreadas, então o commit é no-op para elas.
+            </summary>
+        </member>
         <member name="T:RestaurantOrders.Application.Common.DTOs.MenuCategoryDto">
             <summary>Categoria do cardápio com seus itens disponíveis.</summary>
         </member>
@@ -114,19 +128,19 @@
             <summary>Token único do QR Code da mesa (32 caracteres hex).</summary>
         </member>
         <member name="T:RestaurantOrders.Application.Common.Exceptions.ApplicationException">
-            <summary>
-            Application layer exception
-            </summary>
+            <summary>Exceção genérica da camada de Application para erros de orquestração.</summary>
         </member>
-        <member name="T:RestaurantOrders.Application.Menu.Commands.CreateMenuItem.CreateMenuItemCommandValidator">
-            <summary>
-            Validator for CreateMenuItemCommand
-            </summary>
+        <member name="T:RestaurantOrders.Application.Menu.Commands.CreateMenuItem.CreateMenuItemCommand">
+            <summary>Cria um novo item no cardápio do restaurante.</summary>
         </member>
-        <member name="T:RestaurantOrders.Application.Menu.Commands.UpdateMenuItemAvailability.UpdateMenuItemAvailabilityCommandValidator">
-            <summary>
-            Validator for UpdateMenuItemAvailabilityCommand
-            </summary>
+        <member name="M:RestaurantOrders.Application.Menu.Commands.CreateMenuItem.CreateMenuItemCommand.#ctor(System.Guid,System.Guid,System.String,System.Decimal,System.String,System.String,System.Int32)">
+            <summary>Cria um novo item no cardápio do restaurante.</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Commands.UpdateMenuItemAvailability.UpdateMenuItemAvailabilityCommand">
+            <summary>Habilita ou desabilita a disponibilidade de um item do cardápio.</summary>
+        </member>
+        <member name="M:RestaurantOrders.Application.Menu.Commands.UpdateMenuItemAvailability.UpdateMenuItemAvailabilityCommand.#ctor(System.Guid,System.Boolean)">
+            <summary>Habilita ou desabilita a disponibilidade de um item do cardápio.</summary>
         </member>
         <member name="T:RestaurantOrders.Application.Menu.Queries.GetMenuByRestaurant.GetMenuByRestaurantQuery">
             <summary>
@@ -163,26 +177,6 @@
         <member name="P:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand.Notes">
             <summary>Observações para o item (ex: "sem cebola", "bem passado").</summary>
         </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommandHandler">
-            <summary>
-            Handler for AddItemToOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommandValidator">
-            <summary>
-            Validator for AddItemToOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.CancelOrder.CancelOrderCommandHandler">
-            <summary>
-            Handler for CancelOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.CancelOrder.CancelOrderCommandValidator">
-            <summary>
-            Validator for CancelOrderCommand
-            </summary>
-        </member>
         <member name="T:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand">
             <summary>Cria um novo pedido em modo rascunho (carrinho).</summary>
         </member>
@@ -194,36 +188,6 @@
         </member>
         <member name="P:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand.CustomerId">
             <summary>ID do cliente (opcional — permite rastrear pedidos por cliente).</summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommandHandler">
-            <summary>
-            Handler for CreateOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommandValidator">
-            <summary>
-            Validator for CreateOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.RemoveItemFromOrder.RemoveItemFromOrderCommandHandler">
-            <summary>
-            Handler for RemoveItemFromOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.RemoveItemFromOrder.RemoveItemFromOrderCommandValidator">
-            <summary>
-            Validator for RemoveItemFromOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.SubmitOrder.SubmitOrderCommandHandler">
-            <summary>
-            Handler for SubmitOrderCommand
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.SubmitOrder.SubmitOrderCommandValidator">
-            <summary>
-            Validator for SubmitOrderCommand
-            </summary>
         </member>
         <member name="T:RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommand">
             <summary>Avança o status do pedido (uso da cozinha / gerente).</summary>
@@ -238,19 +202,28 @@
             <c>Preparing→Ready</c>, <c>Ready→Delivered</c>, qualquer→<c>Cancelled</c>.
             </summary>
         </member>
-        <member name="T:RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommandValidator">
-            <summary>
-            Validator for UpdateOrderStatusCommand
-            </summary>
-        </member>
         <member name="T:RestaurantOrders.Application.Orders.EventHandlers.OrderPlacedEventHandler">
             <summary>
-            Event handler for OrderPlacedEvent
+            Reage ao envio do pedido para a cozinha notificando via Supabase Realtime.
+            Disparado pelo <c>ApplicationDbContext.SaveChangesAsync</c> após o commit.
+            </summary>
+        </member>
+        <member name="M:RestaurantOrders.Application.Orders.EventHandlers.OrderPlacedEventHandler.#ctor(RestaurantOrders.Domain.Interfaces.Services.INotificationService)">
+            <summary>
+            Reage ao envio do pedido para a cozinha notificando via Supabase Realtime.
+            Disparado pelo <c>ApplicationDbContext.SaveChangesAsync</c> após o commit.
             </summary>
         </member>
         <member name="T:RestaurantOrders.Application.Orders.EventHandlers.OrderStatusChangedEventHandler">
             <summary>
-            Event handler for OrderStatusChangedEvent
+            Registra em log cada transição de status do pedido.
+            Estenda este handler para notificar o cliente via Supabase Realtime quando necessário.
+            </summary>
+        </member>
+        <member name="M:RestaurantOrders.Application.Orders.EventHandlers.OrderStatusChangedEventHandler.#ctor(Microsoft.Extensions.Logging.ILogger{RestaurantOrders.Application.Orders.EventHandlers.OrderStatusChangedEventHandler})">
+            <summary>
+            Registra em log cada transição de status do pedido.
+            Estenda este handler para notificar o cliente via Supabase Realtime quando necessário.
             </summary>
         </member>
         <member name="T:RestaurantOrders.Application.Orders.Queries.GetActiveOrdersByRestaurant.GetActiveOrdersByRestaurantQuery">
@@ -274,14 +247,7 @@
             </summary>
         </member>
         <member name="T:RestaurantOrders.Application.Orders.Queries.GetOrdersByTable.GetOrdersByTableQuery">
-            <summary>
-            Query to get orders by table
-            </summary>
-        </member>
-        <member name="T:RestaurantOrders.Application.Orders.Queries.GetOrdersByTable.GetOrdersByTableQueryHandler">
-            <summary>
-            Handler for GetOrdersByTableQuery
-            </summary>
+            <summary>Retorna todos os pedidos de uma mesa, ordenados do mais recente para o mais antigo.</summary>
         </member>
         <member name="T:RestaurantOrders.Application.Tables.Queries.GetTableByQrCode.GetTableByQrCodeQuery">
             <summary>

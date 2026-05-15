@@ -1,5 +1,9 @@
 namespace RestaurantOrders.Domain.ValueObjects;
 
+/// <summary>
+/// Value Object imutável que representa um valor monetário com moeda.
+/// Padrão da plataforma: BRL. Operadores +, -, * garantem invariantes de moeda.
+/// </summary>
 public class Money : IEquatable<Money>
 {
     public decimal Amount   { get; private set; }
@@ -10,7 +14,7 @@ public class Money : IEquatable<Money>
     public Money(decimal amount, string currency = "BRL")
     {
         if (amount < 0)
-            throw new ArgumentException("Amount cannot be negative");
+            throw new ArgumentException("O valor monetário não pode ser negativo.");
 
         Amount   = amount;
         Currency = currency ?? throw new ArgumentNullException(nameof(currency));
@@ -21,21 +25,23 @@ public class Money : IEquatable<Money>
     public static Money operator +(Money left, Money right)
     {
         if (left.Currency != right.Currency)
-            throw new InvalidOperationException($"Cannot add different currencies: {left.Currency} and {right.Currency}");
+            throw new InvalidOperationException(
+                $"Não é possível somar moedas diferentes: {left.Currency} e {right.Currency}.");
         return new Money(left.Amount + right.Amount, left.Currency);
     }
 
     public static Money operator -(Money left, Money right)
     {
         if (left.Currency != right.Currency)
-            throw new InvalidOperationException($"Cannot subtract different currencies: {left.Currency} and {right.Currency}");
+            throw new InvalidOperationException(
+                $"Não é possível subtrair moedas diferentes: {left.Currency} e {right.Currency}.");
         return new Money(left.Amount - right.Amount, left.Currency);
     }
 
     public static Money operator *(Money money, int multiplier)
     {
         if (multiplier < 0)
-            throw new ArgumentException("Multiplier cannot be negative");
+            throw new ArgumentException("O multiplicador não pode ser negativo.");
         return new Money(money.Amount * multiplier, money.Currency);
     }
 
@@ -46,6 +52,6 @@ public class Money : IEquatable<Money>
     }
 
     public override bool Equals(object? obj) => Equals(obj as Money);
-    public override int GetHashCode() => HashCode.Combine(Amount, Currency);
-    public override string ToString() => $"{Currency} {Amount:F2}";
+    public override int  GetHashCode()        => HashCode.Combine(Amount, Currency);
+    public override string ToString()         => $"{Currency} {Amount:F2}";
 }

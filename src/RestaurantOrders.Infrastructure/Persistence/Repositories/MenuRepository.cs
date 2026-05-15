@@ -22,21 +22,17 @@ public class MenuRepository(ApplicationDbContext context) : IMenuRepository
             .OrderBy(i => i.DisplayOrder)
             .ToListAsync(ct);
 
+    // Métodos de escrita apenas rastreiam mudanças — commit é feito pelo TransactionBehavior via IUnitOfWork
+
     public async Task AddCategoryAsync(MenuCategory category, CancellationToken ct = default)
-    {
-        await context.MenuCategories.AddAsync(category, ct);
-        await context.SaveChangesAsync(ct);
-    }
+        => await context.MenuCategories.AddAsync(category, ct);
 
     public async Task AddMenuItemAsync(MenuItem menuItem, CancellationToken ct = default)
-    {
-        await context.MenuItems.AddAsync(menuItem, ct);
-        await context.SaveChangesAsync(ct);
-    }
+        => await context.MenuItems.AddAsync(menuItem, ct);
 
-    public async Task UpdateMenuItemAsync(MenuItem menuItem, CancellationToken ct = default)
+    public Task UpdateMenuItemAsync(MenuItem menuItem, CancellationToken ct = default)
     {
         context.MenuItems.Update(menuItem);
-        await context.SaveChangesAsync(ct);
+        return Task.CompletedTask;
     }
 }

@@ -2,11 +2,9 @@ namespace RestaurantOrders.Domain.Events;
 
 using RestaurantOrders.Domain.Common;
 
-/// <summary>
-/// Domain event raised when an item is added to an order
-/// </summary>
+/// <summary>Publicado quando um item é adicionado ao carrinho do pedido.</summary>
 public record OrderItemAddedEvent(
     Guid OrderId,
     Guid MenuItemId,
-    int Quantity
+    int  Quantity
 ) : IDomainEvent;
