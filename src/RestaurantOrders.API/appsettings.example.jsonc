@@ -1,0 +1,89 @@
+// =============================================================================
+// GUIA DE CONFIGURAÇÃO — RestaurantOrders API
+// =============================================================================
+// 1. Copie este arquivo para "appsettings.json"
+// 2. Substitua todos os <PLACEHOLDERS> pelos valores reais do seu projeto
+// 3. Para desenvolvimento local, sobrescreva valores em "appsettings.Development.json"
+//
+// Onde encontrar as credenciais:
+//   Supabase Dashboard → seu projeto → Project Settings → API
+// =============================================================================
+{
+  "ConnectionStrings": {
+    // -------------------------------------------------------------------------
+    // Supabase Dashboard → Project Settings → Database → Connection string
+    //   → clique em ".NET" para copiar no formato Npgsql
+    // Substitua <PROJECT-REF> e <DB-PASSWORD> pelos seus valores.
+    // -------------------------------------------------------------------------
+    "DefaultConnection": "Host=db.<PROJECT-REF>.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=<DB-PASSWORD>;SSL Mode=Require;Trust Server Certificate=true"
+  },
+
+  "Supabase": {
+    // -------------------------------------------------------------------------
+    // Project URL
+    // Dashboard → Project Settings → API → Project URL
+    // Formato: https://<PROJECT-REF>.supabase.co
+    // -------------------------------------------------------------------------
+    "Url": "https://<PROJECT-REF>.supabase.co",
+
+    // -------------------------------------------------------------------------
+    // Anon Key (chave pública)
+    // Dashboard → Project Settings → API → Project API Keys → "anon / public"
+    // Pode ser exposta no frontend com segurança (RLS protege os dados).
+    // -------------------------------------------------------------------------
+    "AnonKey": "<SUPABASE-ANON-KEY>",
+
+    // -------------------------------------------------------------------------
+    // Service Role Key  ⚠️  NUNCA exponha no frontend ou comite no git
+    // Dashboard → Project Settings → API → Project API Keys → "service_role"
+    // Usada pelo backend para operações administrativas (bypass de RLS).
+    // -------------------------------------------------------------------------
+    "ServiceRoleKey": "<SUPABASE-SERVICE-ROLE-KEY>",
+
+    // -------------------------------------------------------------------------
+    // JWT Secret
+    // Dashboard → Project Settings → API → JWT Settings → "JWT Secret"
+    // Usado para validar tokens Supabase diretamente (sem OIDC discovery).
+    // Alternativa ao "Authority" em AuthExtensions.cs — veja comentário lá.
+    // -------------------------------------------------------------------------
+    "JwtSecret": "<SUPABASE-JWT-SECRET>",
+
+    // -------------------------------------------------------------------------
+    // Storage Bucket — fotos dos itens do cardápio
+    // Dashboard → Storage → New bucket → crie um bucket público ou privado
+    // Sugestão de nome: "menu-images"
+    // -------------------------------------------------------------------------
+    "MenuImagesBucket": "menu-images"
+  },
+
+  "Logging": {
+    "LogLevel": {
+      // Trace | Debug | Information | Warning | Error | Critical | None
+      "Default": "Information",
+
+      // Reduz ruído do ASP.NET Core em produção
+      "Microsoft.AspNetCore": "Warning",
+
+      // "Information" → exibe as queries SQL (útil em dev)
+      // "Warning"     → silencia queries em produção
+      "Microsoft.EntityFrameworkCore.Database.Command": "Warning"
+    }
+  },
+
+  "AllowedHosts": "*"
+}
+
+// =============================================================================
+// RESUMO — O que copiar de onde no Supabase Dashboard
+// =============================================================================
+//
+//  Campo                              Caminho no Dashboard
+//  ─────────────────────────────────  ───────────────────────────────────────
+//  ConnectionStrings.DefaultConnection  Settings → Database → Connection string (.NET)
+//  Supabase.Url                         Settings → API → Project URL
+//  Supabase.AnonKey                     Settings → API → anon / public
+//  Supabase.ServiceRoleKey              Settings → API → service_role  ⚠️ secreto
+//  Supabase.JwtSecret                   Settings → API → JWT Settings → JWT Secret
+//  Supabase.MenuImagesBucket            Storage → nome do bucket que você criar
+//
+// =============================================================================

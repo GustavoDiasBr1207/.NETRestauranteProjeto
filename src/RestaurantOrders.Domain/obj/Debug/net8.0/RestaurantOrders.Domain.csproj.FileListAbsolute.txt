@@ -10,3 +10,4 @@
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/refint/RestaurantOrders.Domain.dll
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.pdb
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/ref/RestaurantOrders.Domain.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Domain/obj/Debug/net8.0/RestaurantOrders.Domain.csproj.AssemblyReference.cache

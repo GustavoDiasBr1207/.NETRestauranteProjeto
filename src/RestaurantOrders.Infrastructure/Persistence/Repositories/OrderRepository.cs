@@ -1,56 +1,55 @@
 namespace RestaurantOrders.Infrastructure.Persistence.Repositories;
 
+using Microsoft.EntityFrameworkCore;
 using RestaurantOrders.Domain.Entities;
+using RestaurantOrders.Domain.Enums;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Repository implementation for Order entity
-/// </summary>
-public class OrderRepository : IOrderRepository
+public class OrderRepository(ApplicationDbContext context) : IOrderRepository
 {
-    private readonly ApplicationDbContext _context;
-    
-    public OrderRepository(ApplicationDbContext context)
+    public async Task<Order?> GetByIdAsync(Guid orderId, CancellationToken ct = default)
+        => await context.Orders.FindAsync([orderId], ct);
+
+    public async Task<Order?> GetByIdWithItemsAsync(Guid orderId, CancellationToken ct = default)
+        => await context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == orderId, ct);
+
+    public async Task<List<Order>> GetActiveByRestaurantAsync(Guid restaurantId, CancellationToken ct = default)
+        => await context.Orders
+            .Include(o => o.Items)
+            .Where(o => o.RestaurantId == restaurantId
+                     && o.Status != OrderStatusEnum.Delivered
+                     && o.Status != OrderStatusEnum.Cancelled)
+            .OrderByDescending(o => o.PlacedAt)
+            .ToListAsync(ct);
+
+    public async Task<List<Order>> GetByTableIdAsync(Guid tableId, CancellationToken ct = default)
+        => await context.Orders
+            .Include(o => o.Items)
+            .Where(o => o.TableId == tableId)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync(ct);
+
+    public async Task AddAsync(Order order, CancellationToken ct = default)
     {
-        _context = context;
+        await context.Orders.AddAsync(order, ct);
+        await context.SaveChangesAsync(ct);
     }
-    
-    public async Task<Order?> GetByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
+
+    public async Task UpdateAsync(Order order, CancellationToken ct = default)
     {
-        // TODO: Implement GetByIdAsync
-        return null;
+        context.Orders.Update(order);
+        await context.SaveChangesAsync(ct);
     }
-    
-    public async Task<Order?> GetByIdWithItemsAsync(Guid orderId, CancellationToken cancellationToken = default)
+
+    public async Task DeleteAsync(Guid orderId, CancellationToken ct = default)
     {
-        // TODO: Implement GetByIdWithItemsAsync with Include for OrderItems
-        return null;
-    }
-    
-    public async Task<List<Order>> GetActiveByRestaurantAsync(Guid restaurantId, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement GetActiveByRestaurantAsync
-        return new();
-    }
-    
-    public async Task<List<Order>> GetByTableIdAsync(Guid tableId, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement GetByTableIdAsync
-        return new();
-    }
-    
-    public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement AddAsync
-    }
-    
-    public async Task UpdateAsync(Order order, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement UpdateAsync
-    }
-    
-    public async Task DeleteAsync(Guid orderId, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement DeleteAsync
+        var order = await context.Orders.FindAsync([orderId], ct);
+        if (order is not null)
+        {
+            context.Orders.Remove(order);
+            await context.SaveChangesAsync(ct);
+        }
     }
 }

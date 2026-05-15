@@ -4,35 +4,21 @@ using MediatR;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 using RestaurantOrders.Domain.Exceptions;
 
-/// <summary>
-/// Command to update menu item availability
-/// </summary>
-public class UpdateMenuItemAvailabilityCommand : IRequest<Unit>
-{
-    public Guid MenuItemId { get; set; }
-    public bool IsAvailable { get; set; }
-}
+public record UpdateMenuItemAvailabilityCommand(Guid MenuItemId, bool IsAvailable) : IRequest;
 
-/// <summary>
-/// Handler for UpdateMenuItemAvailabilityCommand
-/// </summary>
-public class UpdateMenuItemAvailabilityCommandHandler : IRequestHandler<UpdateMenuItemAvailabilityCommand>
+public class UpdateMenuItemAvailabilityCommandHandler(IMenuRepository menuRepository)
+    : IRequestHandler<UpdateMenuItemAvailabilityCommand>
 {
-    private readonly IMenuRepository _menuRepository;
-    
-    public UpdateMenuItemAvailabilityCommandHandler(IMenuRepository menuRepository)
+    public async Task Handle(UpdateMenuItemAvailabilityCommand request, CancellationToken ct)
     {
-        _menuRepository = menuRepository;
-    }
-    
-    public async Task Handle(UpdateMenuItemAvailabilityCommand request, CancellationToken cancellationToken)
-    {
-        // TODO: Implement logic to update menu item availability
-        var menuItem = await _menuRepository.GetItemByIdAsync(request.MenuItemId, cancellationToken)
-            ?? throw new NotFoundException($"Menu item with id '{request.MenuItemId}' not found");
-        
-        menuItem.IsAvailable = request.IsAvailable;
-        
-        await _menuRepository.UpdateMenuItemAsync(menuItem, cancellationToken);
+        var menuItem = await menuRepository.GetItemByIdAsync(request.MenuItemId, ct)
+            ?? throw new NotFoundException($"Item de menu '{request.MenuItemId}' não encontrado.");
+
+        if (request.IsAvailable)
+            menuItem.MakeAvailable();
+        else
+            menuItem.MakeUnavailable();
+
+        await menuRepository.UpdateMenuItemAsync(menuItem, ct);
     }
 }

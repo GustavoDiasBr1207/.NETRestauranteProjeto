@@ -5,39 +5,32 @@ using RestaurantOrders.Domain.Entities;
 using RestaurantOrders.Domain.ValueObjects;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Command to create a menu item
-/// </summary>
-public class CreateMenuItemCommand : IRequest<Guid>
-{
-    public Guid RestaurantId { get; set; }
-    public Guid CategoryId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-    public string? ImageUrl { get; set; }
-}
+public record CreateMenuItemCommand(
+    Guid    RestaurantId,
+    Guid    CategoryId,
+    string  Name,
+    decimal Price,
+    string? Description  = null,
+    string? ImageUrl     = null,
+    int     DisplayOrder = 0
+) : IRequest<Guid>;
 
-/// <summary>
-/// Handler for CreateMenuItemCommand
-/// </summary>
-public class CreateMenuItemCommandHandler : IRequestHandler<CreateMenuItemCommand, Guid>
+public class CreateMenuItemCommandHandler(IMenuRepository menuRepository)
+    : IRequestHandler<CreateMenuItemCommand, Guid>
 {
-    private readonly IMenuRepository _menuRepository;
-    
-    public CreateMenuItemCommandHandler(IMenuRepository menuRepository)
+    public async Task<Guid> Handle(CreateMenuItemCommand request, CancellationToken ct)
     {
-        _menuRepository = menuRepository;
-    }
-    
-    public async Task<Guid> Handle(CreateMenuItemCommand request, CancellationToken cancellationToken)
-    {
-        // TODO: Implement logic to create menu item
-        var price = new Money(request.Price);
-        var menuItem = MenuItem.Create(request.CategoryId, request.Name, request.Description, price, request.ImageUrl);
-        
-        await _menuRepository.AddMenuItemAsync(menuItem, cancellationToken);
-        
+        var price    = new Money(request.Price);
+        var menuItem = MenuItem.Create(
+            request.RestaurantId,
+            request.CategoryId,
+            request.Name,
+            price,
+            request.Description,
+            request.ImageUrl,
+            request.DisplayOrder);
+
+        await menuRepository.AddMenuItemAsync(menuItem, ct);
         return menuItem.Id;
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "JyoRMkdpOaU=",
+  "dgSpecHash": "Kk4NI6DOSOI=",
   "success": true,
   "projectFilePath": "/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Application.Tests/RestaurantOrders.Application.Tests.csproj",
   "expectedPackageFiles": [
@@ -10,11 +10,12 @@
     "/home/gustavodias/.nuget/packages/fluentassertions/6.12.0/fluentassertions.6.12.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/fluentvalidation/11.7.0/fluentvalidation.11.7.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.7.0/fluentvalidation.dependencyinjectionextensions.11.7.0.nupkg.sha512",
-    "/home/gustavodias/.nuget/packages/mediatr/12.0.1/mediatr.12.0.1.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/mediatr/12.2.0/mediatr.12.2.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/microsoft.codecoverage/17.9.0/microsoft.codecoverage.17.9.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
-    "/home/gustavodias/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/6.0.0/microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "/home/gustavodias/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/microsoft.extensions.options/6.0.0/microsoft.extensions.options.6.0.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/microsoft.extensions.primitives/6.0.0/microsoft.extensions.primitives.6.0.0.nupkg.sha512",
     "/home/gustavodias/.nuget/packages/microsoft.net.test.sdk/17.9.0/microsoft.net.test.sdk.17.9.0.nupkg.sha512",

@@ -2,8 +2,10 @@ namespace RestaurantOrders.Domain.ValueObjects;
 
 public class Money : IEquatable<Money>
 {
-    public decimal Amount   { get; init; }
-    public string  Currency { get; init; } = "BRL";
+    public decimal Amount   { get; private set; }
+    public string  Currency { get; private set; } = "BRL";
+
+    private Money() { Amount = 0; Currency = "BRL"; } // EF Core
 
     public Money(decimal amount, string currency = "BRL")
     {

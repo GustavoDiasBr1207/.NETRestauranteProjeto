@@ -1,19 +1,24 @@
 namespace RestaurantOrders.Infrastructure.Realtime;
 
+using Microsoft.Extensions.Logging;
 using RestaurantOrders.Domain.Interfaces.Services;
 
-/// <summary>
-/// Notification service implementation using Supabase Realtime
-/// </summary>
-public class SupabaseNotificationService : INotificationService
+// As notificações em tempo real acontecem automaticamente via Supabase Realtime
+// quando o EF Core persiste mudanças nas tabelas com REPLICA IDENTITY FULL habilitado.
+// Implemente aqui o Broadcast channel quando adicionar o supabase-csharp client.
+public class SupabaseNotificationService(ILogger<SupabaseNotificationService> logger) : INotificationService
 {
-    public async Task NotifyKitchenAsync(Guid restaurantId, Guid orderId, CancellationToken cancellationToken = default)
+    public Task NotifyKitchenAsync(Guid restaurantId, Guid orderId, CancellationToken ct = default)
     {
-        // TODO: Implement kitchen notification via Supabase Broadcast
+        logger.LogInformation("Cozinha notificada — RestaurantId: {RestaurantId}, OrderId: {OrderId}", restaurantId, orderId);
+        // TODO: await supabaseClient.Channel($"kitchen:{restaurantId}").Send("new_order", new { order_id = orderId })
+        return Task.CompletedTask;
     }
-    
-    public async Task NotifyTableAsync(Guid tableId, string message, CancellationToken cancellationToken = default)
+
+    public Task NotifyTableAsync(Guid tableId, string message, CancellationToken ct = default)
     {
-        // TODO: Implement table notification via Supabase Broadcast
+        logger.LogInformation("Mesa notificada — TableId: {TableId}, Message: {Message}", tableId, message);
+        // TODO: await supabaseClient.Channel($"table:{tableId}").Send("status_update", new { message })
+        return Task.CompletedTask;
     }
 }

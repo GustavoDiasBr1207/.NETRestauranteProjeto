@@ -1,2 +1,4 @@
 .env
 appsettings.json
+appsettings.*.json
+!appsettings.example.jsonc

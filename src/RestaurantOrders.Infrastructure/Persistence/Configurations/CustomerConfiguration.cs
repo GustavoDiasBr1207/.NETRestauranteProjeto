@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RestaurantOrders.Domain.Entities;
 
-/// <summary>
-/// EF Core configuration for Customer entity
-/// </summary>
 public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 {
     public void Configure(EntityTypeBuilder<Customer> builder)
     {
-        // TODO: Configure Customer entity
+        builder.ToTable("customers");
+        builder.HasKey(c => c.Id);
+
+        builder.Property(c => c.Name).HasMaxLength(150);
+        builder.Property(c => c.Phone).HasMaxLength(20);
     }
 }

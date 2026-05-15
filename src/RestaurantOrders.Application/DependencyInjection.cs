@@ -1,28 +1,27 @@
 namespace RestaurantOrders.Application;
 
 using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
 using MediatR;
+using FluentValidation;
+using RestaurantOrders.Application.Common.Behaviors;
 
-/// <summary>
-/// Dependency injection configuration for Application layer
-/// </summary>
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        // Register MediatR
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
-        
-        // Register AutoMapper
-        services.AddAutoMapper(typeof(DependencyInjection).Assembly);
-        
-        // Register FluentValidation
-        services.AddFluentValidation(cfg =>
+        var assembly = typeof(DependencyInjection).Assembly;
+
+        services.AddAutoMapper(assembly);
+
+        services.AddValidatorsFromAssembly(assembly);
+
+        services.AddMediatR(cfg =>
         {
-            cfg.RegisterValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+            cfg.RegisterServicesFromAssembly(assembly);
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
-        
+
         return services;
     }
 }

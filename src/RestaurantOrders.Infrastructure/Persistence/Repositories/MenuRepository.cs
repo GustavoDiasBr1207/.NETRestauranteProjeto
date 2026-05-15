@@ -1,50 +1,42 @@
 namespace RestaurantOrders.Infrastructure.Persistence.Repositories;
 
+using Microsoft.EntityFrameworkCore;
 using RestaurantOrders.Domain.Entities;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Repository implementation for Menu entities (Category and MenuItem)
-/// </summary>
-public class MenuRepository : IMenuRepository
+public class MenuRepository(ApplicationDbContext context) : IMenuRepository
 {
-    private readonly ApplicationDbContext _context;
-    
-    public MenuRepository(ApplicationDbContext context)
+    public async Task<List<MenuCategory>> GetCategoriesWithItemsAsync(Guid restaurantId, CancellationToken ct = default)
+        => await context.MenuCategories
+            .Include(c => c.Items)
+            .Where(c => c.RestaurantId == restaurantId && c.IsActive)
+            .OrderBy(c => c.DisplayOrder)
+            .ToListAsync(ct);
+
+    public async Task<MenuItem?> GetItemByIdAsync(Guid menuItemId, CancellationToken ct = default)
+        => await context.MenuItems.FindAsync([menuItemId], ct);
+
+    public async Task<List<MenuItem>> GetItemsByRestaurantAsync(Guid restaurantId, CancellationToken ct = default)
+        => await context.MenuItems
+            .Where(i => i.RestaurantId == restaurantId)
+            .OrderBy(i => i.DisplayOrder)
+            .ToListAsync(ct);
+
+    public async Task AddCategoryAsync(MenuCategory category, CancellationToken ct = default)
     {
-        _context = context;
+        await context.MenuCategories.AddAsync(category, ct);
+        await context.SaveChangesAsync(ct);
     }
-    
-    public async Task<List<MenuCategory>> GetCategoriesWithItemsAsync(Guid restaurantId, CancellationToken cancellationToken = default)
+
+    public async Task AddMenuItemAsync(MenuItem menuItem, CancellationToken ct = default)
     {
-        // TODO: Implement GetCategoriesWithItemsAsync with Include for MenuItems
-        return new();
+        await context.MenuItems.AddAsync(menuItem, ct);
+        await context.SaveChangesAsync(ct);
     }
-    
-    public async Task<MenuItem?> GetItemByIdAsync(Guid menuItemId, CancellationToken cancellationToken = default)
+
+    public async Task UpdateMenuItemAsync(MenuItem menuItem, CancellationToken ct = default)
     {
-        // TODO: Implement GetItemByIdAsync
-        return null;
-    }
-    
-    public async Task<List<MenuItem>> GetItemsByRestaurantAsync(Guid restaurantId, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement GetItemsByRestaurantAsync
-        return new();
-    }
-    
-    public async Task AddCategoryAsync(MenuCategory category, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement AddCategoryAsync
-    }
-    
-    public async Task AddMenuItemAsync(MenuItem menuItem, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement AddMenuItemAsync
-    }
-    
-    public async Task UpdateMenuItemAsync(MenuItem menuItem, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement UpdateMenuItemAsync
+        context.MenuItems.Update(menuItem);
+        await context.SaveChangesAsync(ct);
     }
 }

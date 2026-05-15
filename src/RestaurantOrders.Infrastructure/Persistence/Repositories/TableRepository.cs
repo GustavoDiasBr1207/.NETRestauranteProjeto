@@ -1,45 +1,33 @@
 namespace RestaurantOrders.Infrastructure.Persistence.Repositories;
 
+using Microsoft.EntityFrameworkCore;
 using RestaurantOrders.Domain.Entities;
 using RestaurantOrders.Domain.Interfaces.Repositories;
 
-/// <summary>
-/// Repository implementation for Restaurant entity
-/// </summary>
-public class RestaurantRepository : IRestaurantRepository
+public class TableRepository(ApplicationDbContext context) : ITableRepository
 {
-    private readonly ApplicationDbContext _context;
-    
-    public RestaurantRepository(ApplicationDbContext context)
+    public async Task<Table?> GetByIdAsync(Guid tableId, CancellationToken ct = default)
+        => await context.Tables.FindAsync([tableId], ct);
+
+    public async Task<Table?> GetByQrCodeTokenAsync(string qrCodeToken, CancellationToken ct = default)
+        => await context.Tables
+            .FirstOrDefaultAsync(t => t.QrCode.Token == qrCodeToken && t.IsActive, ct);
+
+    public async Task<List<Table>> GetByRestaurantAsync(Guid restaurantId, CancellationToken ct = default)
+        => await context.Tables
+            .Where(t => t.RestaurantId == restaurantId)
+            .OrderBy(t => t.Number)
+            .ToListAsync(ct);
+
+    public async Task AddAsync(Table table, CancellationToken ct = default)
     {
-        _context = context;
+        await context.Tables.AddAsync(table, ct);
+        await context.SaveChangesAsync(ct);
     }
-    
-    public async Task<Restaurant?> GetByIdAsync(Guid restaurantId, CancellationToken cancellationToken = default)
+
+    public async Task UpdateAsync(Table table, CancellationToken ct = default)
     {
-        // TODO: Implement GetByIdAsync
-        return null;
-    }
-    
-    public async Task<Restaurant?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement GetBySlugAsync
-        return null;
-    }
-    
-    public async Task<List<Restaurant>> GetAllActiveAsync(CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement GetAllActiveAsync
-        return new();
-    }
-    
-    public async Task AddAsync(Restaurant restaurant, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement AddAsync
-    }
-    
-    public async Task UpdateAsync(Restaurant restaurant, CancellationToken cancellationToken = default)
-    {
-        // TODO: Implement UpdateAsync
+        context.Tables.Update(table);
+        await context.SaveChangesAsync(ct);
     }
 }

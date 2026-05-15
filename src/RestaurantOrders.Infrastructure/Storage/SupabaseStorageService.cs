@@ -1,21 +1,22 @@
 namespace RestaurantOrders.Infrastructure.Storage;
 
+using Microsoft.Extensions.Logging;
 using RestaurantOrders.Domain.Interfaces.Services;
 
-/// <summary>
-/// Storage service implementation using Supabase Storage
-/// </summary>
-public class SupabaseStorageService : IStorageService
+// Implemente aqui o upload real para Supabase Storage quando adicionar as credenciais.
+public class SupabaseStorageService(ILogger<SupabaseStorageService> logger) : IStorageService
 {
-    public async Task<string> UploadAsync(Stream file, string fileName, string bucket, CancellationToken cancellationToken = default)
+    public Task<string> UploadAsync(Stream file, string fileName, string bucket, CancellationToken ct = default)
     {
-        // TODO: Implement file upload to Supabase Storage
-        return string.Empty;
+        logger.LogWarning("SupabaseStorageService.UploadAsync não implementado. Configure o cliente Supabase.");
+        // TODO: return await supabaseClient.Storage.From(bucket).Upload(file, fileName)
+        return Task.FromResult(string.Empty);
     }
-    
-    public async Task<bool> DeleteAsync(string filePath, string bucket, CancellationToken cancellationToken = default)
+
+    public Task<bool> DeleteAsync(string filePath, string bucket, CancellationToken ct = default)
     {
-        // TODO: Implement file deletion from Supabase Storage
-        return false;
+        logger.LogWarning("SupabaseStorageService.DeleteAsync não implementado.");
+        // TODO: return await supabaseClient.Storage.From(bucket).Remove([filePath])
+        return Task.FromResult(false);
     }
 }

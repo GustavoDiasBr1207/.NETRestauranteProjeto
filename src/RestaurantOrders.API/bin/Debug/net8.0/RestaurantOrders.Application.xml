@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RestaurantOrders.Application</name>
+    </assembly>
+    <members>
+        <member name="T:RestaurantOrders.Application.Common.DTOs.MenuCategoryDto">
+            <summary>Categoria do cardápio com seus itens disponíveis.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuCategoryDto.Id">
+            <summary>Identificador único da categoria.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuCategoryDto.Name">
+            <summary>Nome da categoria (ex: "Entradas", "Pratos Principais", "Bebidas").</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuCategoryDto.Items">
+            <summary>Itens disponíveis nesta categoria, ordenados por <c>DisplayOrder</c>.</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Common.DTOs.MenuItemDto">
+            <summary>Item do cardápio retornado pela API.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuItemDto.Id">
+            <summary>Identificador único do item.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuItemDto.Name">
+            <summary>Nome do item (ex: "Risoto de Funghi").</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuItemDto.Description">
+            <summary>Descrição detalhada do item.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuItemDto.Price">
+            <summary>Preço unitário em BRL.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuItemDto.ImageUrl">
+            <summary>URL da imagem do item (opcional).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.MenuItemDto.IsAvailable">
+            <summary>Indica se o item está disponível para pedido.</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Common.DTOs.OrderDto">
+            <summary>Representação de um pedido retornada pela API.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.Id">
+            <summary>Identificador único do pedido.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.RestaurantId">
+            <summary>Restaurante ao qual o pedido pertence.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.TableId">
+            <summary>Mesa associada ao pedido.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.Status">
+            <summary>
+            Status atual do pedido.
+            Valores possíveis: <c>Draft</c>, <c>Pending</c>, <c>Confirmed</c>,
+            <c>Preparing</c>, <c>Ready</c>, <c>Delivered</c>, <c>Cancelled</c>.
+            </summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.TotalAmount">
+            <summary>Valor total do pedido em centavos (BRL).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.Currency">
+            <summary>Moeda do valor total (sempre <c>BRL</c>).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.Notes">
+            <summary>Observações gerais do pedido (opcional).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.PlacedAt">
+            <summary>Data/hora UTC em que o pedido foi submetido à cozinha.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.CreatedAt">
+            <summary>Data/hora UTC de criação do pedido (rascunho).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderDto.Items">
+            <summary>Itens que compõem o pedido.</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Common.DTOs.OrderItemDto">
+            <summary>Item de um pedido retornado pela API.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.Id">
+            <summary>Identificador único do item no pedido.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.MenuItemId">
+            <summary>ID do item no cardápio.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.MenuItemName">
+            <summary>Nome do item no cardápio no momento do pedido.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.Quantity">
+            <summary>Quantidade solicitada.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.UnitPrice">
+            <summary>Preço unitário do item no momento do pedido (BRL).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.Subtotal">
+            <summary>Subtotal do item (<c>UnitPrice × Quantity</c>, BRL).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.OrderItemDto.Notes">
+            <summary>Observações do cliente para este item (ex: "sem cebola").</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Common.DTOs.TableDto">
+            <summary>Dados da mesa resolvida a partir do QR Code.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.TableDto.Id">
+            <summary>Identificador único da mesa.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.TableDto.RestaurantId">
+            <summary>Restaurante ao qual a mesa pertence.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.TableDto.Number">
+            <summary>Número da mesa exibido ao cliente.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Common.DTOs.TableDto.QrCodeToken">
+            <summary>Token único do QR Code da mesa (32 caracteres hex).</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Common.Exceptions.ApplicationException">
+            <summary>
+            Application layer exception
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Commands.CreateMenuItem.CreateMenuItemCommandValidator">
+            <summary>
+            Validator for CreateMenuItemCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Commands.UpdateMenuItemAvailability.UpdateMenuItemAvailabilityCommandValidator">
+            <summary>
+            Validator for UpdateMenuItemAvailabilityCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Queries.GetMenuByRestaurant.GetMenuByRestaurantQuery">
+            <summary>
+            Query to get menu by restaurant
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Queries.GetMenuByRestaurant.GetMenuByRestaurantQueryHandler">
+            <summary>
+            Handler for GetMenuByRestaurantQuery
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Queries.GetMenuItemById.GetMenuItemByIdQuery">
+            <summary>
+            Query to get menu item by id
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Menu.Queries.GetMenuItemById.GetMenuItemByIdQueryHandler">
+            <summary>
+            Handler for GetMenuItemByIdQuery
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand">
+            <summary>Adiciona um item ao carrinho do pedido.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand.OrderId">
+            <summary>ID do pedido (preenchido via rota — não enviar no body).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand.MenuItemId">
+            <summary>ID do item do cardápio a adicionar.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand.Quantity">
+            <summary>Quantidade desejada (mínimo 1).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand.Notes">
+            <summary>Observações para o item (ex: "sem cebola", "bem passado").</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommandHandler">
+            <summary>
+            Handler for AddItemToOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommandValidator">
+            <summary>
+            Validator for AddItemToOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.CancelOrder.CancelOrderCommandHandler">
+            <summary>
+            Handler for CancelOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.CancelOrder.CancelOrderCommandValidator">
+            <summary>
+            Validator for CancelOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand">
+            <summary>Cria um novo pedido em modo rascunho (carrinho).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand.RestaurantId">
+            <summary>ID do restaurante onde o pedido será feito.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand.TableId">
+            <summary>ID da mesa associada ao pedido.</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand.CustomerId">
+            <summary>ID do cliente (opcional — permite rastrear pedidos por cliente).</summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommandHandler">
+            <summary>
+            Handler for CreateOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommandValidator">
+            <summary>
+            Validator for CreateOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.RemoveItemFromOrder.RemoveItemFromOrderCommandHandler">
+            <summary>
+            Handler for RemoveItemFromOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.RemoveItemFromOrder.RemoveItemFromOrderCommandValidator">
+            <summary>
+            Validator for RemoveItemFromOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.SubmitOrder.SubmitOrderCommandHandler">
+            <summary>
+            Handler for SubmitOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.SubmitOrder.SubmitOrderCommandValidator">
+            <summary>
+            Validator for SubmitOrderCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommand">
+            <summary>Avança o status do pedido (uso da cozinha / gerente).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommand.OrderId">
+            <summary>ID do pedido (preenchido via rota — não enviar no body).</summary>
+        </member>
+        <member name="P:RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommand.NewStatus">
+            <summary>
+            Novo status desejado.
+            Transições válidas: <c>Pending→Confirmed</c>, <c>Confirmed→Preparing</c>,
+            <c>Preparing→Ready</c>, <c>Ready→Delivered</c>, qualquer→<c>Cancelled</c>.
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommandValidator">
+            <summary>
+            Validator for UpdateOrderStatusCommand
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.EventHandlers.OrderPlacedEventHandler">
+            <summary>
+            Event handler for OrderPlacedEvent
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.EventHandlers.OrderStatusChangedEventHandler">
+            <summary>
+            Event handler for OrderStatusChangedEvent
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Queries.GetActiveOrdersByRestaurant.GetActiveOrdersByRestaurantQuery">
+            <summary>
+            Query to get active orders by restaurant
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Queries.GetActiveOrdersByRestaurant.GetActiveOrdersByRestaurantQueryHandler">
+            <summary>
+            Handler for GetActiveOrdersByRestaurantQuery
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Queries.GetOrderById.GetOrderByIdQuery">
+            <summary>
+            Query to get an order by id
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Queries.GetOrderById.GetOrderByIdQueryHandler">
+            <summary>
+            Handler for GetOrderByIdQuery
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Queries.GetOrdersByTable.GetOrdersByTableQuery">
+            <summary>
+            Query to get orders by table
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Orders.Queries.GetOrdersByTable.GetOrdersByTableQueryHandler">
+            <summary>
+            Handler for GetOrdersByTableQuery
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Tables.Queries.GetTableByQrCode.GetTableByQrCodeQuery">
+            <summary>
+            Query to get table by QR code
+            </summary>
+        </member>
+        <member name="T:RestaurantOrders.Application.Tables.Queries.GetTableByQrCode.GetTableByQrCodeQueryHandler">
+            <summary>
+            Handler for GetTableByQrCodeQuery
+            </summary>
+        </member>
+    </members>
+</doc>

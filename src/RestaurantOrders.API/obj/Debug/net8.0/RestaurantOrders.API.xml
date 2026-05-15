@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RestaurantOrders.API</name>
+    </assembly>
+    <members>
+        <member name="T:RestaurantOrders.API.Controllers.MenuController">
+            <summary>
+            Consulta do cardápio por restaurante.
+            </summary>
+            <remarks>
+            Endpoint público usado pelo app do cliente logo após escanear o QR Code da mesa.
+            Retorna todas as categorias com seus itens disponíveis.
+            </remarks>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.MenuController.#ctor(MediatR.IMediator)">
+            <summary>
+            Consulta do cardápio por restaurante.
+            </summary>
+            <remarks>
+            Endpoint público usado pelo app do cliente logo após escanear o QR Code da mesa.
+            Retorna todas as categorias com seus itens disponíveis.
+            </remarks>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.MenuController.GetMenu(System.Guid,System.Threading.CancellationToken)">
+            <summary>Retorna o cardápio completo de um restaurante.</summary>
+            <remarks>
+            Chamado pelo app após resolver a mesa via QR Code.
+            Retorna categorias ordenadas por <c>DisplayOrder</c>, cada uma com seus
+            itens disponíveis também ordenados.
+            <br/><br/>
+            Exemplo de uso após o scan:
+            <br/><c>GET /api/menu?restaurantId=3fa85f64-5717-4562-b3fc-2c963f66afa6</c>
+            </remarks>
+            <param name="restaurantId">ID do restaurante obtido em <c>GET /api/tables/by-qrcode/{token}</c>.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="200">Lista de categorias com itens disponíveis.</response>
+            <response code="400">restaurantId não informado ou inválido.</response>
+        </member>
+        <member name="T:RestaurantOrders.API.Controllers.MenuItemsController">
+            <summary>
+            Gestão de itens do cardápio — criação e controle de disponibilidade.
+            </summary>
+            <remarks>
+            Todos os endpoints requerem autenticação JWT (usuário gerente ou administrador).
+            </remarks>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.MenuItemsController.#ctor(MediatR.IMediator)">
+            <summary>
+            Gestão de itens do cardápio — criação e controle de disponibilidade.
+            </summary>
+            <remarks>
+            Todos os endpoints requerem autenticação JWT (usuário gerente ou administrador).
+            </remarks>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.MenuItemsController.Create(RestaurantOrders.Application.Menu.Commands.CreateMenuItem.CreateMenuItemCommand,System.Threading.CancellationToken)">
+            <summary>Cria um novo item no cardápio.</summary>
+            <remarks>
+            O item é criado como disponível por padrão (<c>IsAvailable = true</c>).
+            Use <c>PATCH /{id}/availability</c> para desabilitá-lo temporariamente
+            (ex: item esgotado).
+            </remarks>
+            <param name="command">Dados do item: nome, preço, categoria, descrição e URL da imagem.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="201">Item criado. Contém o <c>menuItemId</c> gerado.</response>
+            <response code="400">Dados inválidos (nome ou preço ausentes/inválidos).</response>
+            <response code="401">Token JWT ausente ou inválido.</response>
+            <response code="422">Categoria ou restaurante não encontrado.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.MenuItemsController.UpdateAvailability(System.Guid,RestaurantOrders.API.Models.UpdateAvailabilityRequest,System.Threading.CancellationToken)">
+            <summary>Habilita ou desabilita a disponibilidade de um item do cardápio.</summary>
+            <remarks>
+            Itens desabilitados (<c>IsAvailable = false</c>) não aparecem no cardápio do cliente
+            e não podem ser adicionados a novos pedidos.
+            Útil para marcar um item como esgotado temporariamente sem removê-lo.
+            </remarks>
+            <param name="id">ID do item do cardápio.</param>
+            <param name="request">Novo valor de disponibilidade.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="204">Disponibilidade atualizada.</response>
+            <response code="401">Token JWT ausente ou inválido.</response>
+            <response code="404">Item não encontrado.</response>
+        </member>
+        <member name="T:RestaurantOrders.API.Controllers.OrdersController">
+            <summary>
+            Criação e ciclo de vida dos pedidos — do carrinho à entrega na mesa.
+            </summary>
+            <remarks>
+            Fluxo principal:
+            <br/>1. <c>POST /api/orders</c> — cria pedido em rascunho (carrinho)
+            <br/>2. <c>POST /api/orders/{id}/items</c> — adiciona itens
+            <br/>3. <c>POST /api/orders/{id}/submit</c> — envia para cozinha
+            <br/>4. <c>PATCH /api/orders/{id}/status</c> — cozinha avança o status
+            </remarks>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.#ctor(MediatR.IMediator)">
+            <summary>
+            Criação e ciclo de vida dos pedidos — do carrinho à entrega na mesa.
+            </summary>
+            <remarks>
+            Fluxo principal:
+            <br/>1. <c>POST /api/orders</c> — cria pedido em rascunho (carrinho)
+            <br/>2. <c>POST /api/orders/{id}/items</c> — adiciona itens
+            <br/>3. <c>POST /api/orders/{id}/submit</c> — envia para cozinha
+            <br/>4. <c>PATCH /api/orders/{id}/status</c> — cozinha avança o status
+            </remarks>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.Create(RestaurantOrders.Application.Orders.Commands.CreateOrder.CreateOrderCommand,System.Threading.CancellationToken)">
+            <summary>Cria um novo pedido em modo rascunho (carrinho).</summary>
+            <remarks>
+            Chamado logo após o cliente escanear o QR Code e o app resolver a mesa.
+            Retorna o <c>orderId</c> que será usado nas demais operações do carrinho.
+            </remarks>
+            <param name="command">Dados do pedido: restaurante, mesa e cliente opcional.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="201">Pedido criado. Contém o <c>orderId</c> gerado.</response>
+            <response code="400">Dados inválidos (restaurantId ou tableId ausentes).</response>
+            <response code="422">Regra de negócio violada.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.GetById(System.Guid,System.Threading.CancellationToken)">
+            <summary>Retorna um pedido pelo seu identificador.</summary>
+            <param name="id">ID do pedido (UUID).</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="200">Pedido encontrado com seus itens.</response>
+            <response code="404">Pedido não existe.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.List(System.Nullable{System.Guid},System.Nullable{System.Guid},System.Threading.CancellationToken)">
+            <summary>Lista pedidos, filtrando por mesa ou por restaurante (ativos).</summary>
+            <remarks>
+            Informe <b>apenas um</b> dos parâmetros:
+            <br/>• <c>tableId</c> — pedidos da mesa (para o cliente acompanhar)
+            <br/>• <c>restaurantId</c> — pedidos ativos do restaurante (para o painel da cozinha)
+            </remarks>
+            <param name="tableId">Filtra pedidos de uma mesa específica.</param>
+            <param name="restaurantId">Filtra pedidos ativos de um restaurante.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="200">Lista de pedidos.</response>
+            <response code="400">Nenhum filtro informado.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.AddItem(System.Guid,RestaurantOrders.Application.Orders.Commands.AddItemToOrder.AddItemToOrderCommand,System.Threading.CancellationToken)">
+            <summary>Adiciona um item ao carrinho.</summary>
+            <remarks>
+            Só é permitido enquanto o pedido estiver no status <c>Draft</c>.
+            Se o item já existir no pedido, a quantidade é somada.
+            </remarks>
+            <param name="id">ID do pedido.</param>
+            <param name="command">Item a adicionar: menuItemId, quantidade e observação opcional.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="204">Item adicionado com sucesso.</response>
+            <response code="400">Dados inválidos.</response>
+            <response code="404">Pedido ou item do cardápio não encontrado.</response>
+            <response code="422">Item indisponível ou pedido não está em rascunho.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.RemoveItem(System.Guid,System.Guid,System.Threading.CancellationToken)">
+            <summary>Remove um item do carrinho.</summary>
+            <remarks>Só é permitido enquanto o pedido estiver no status <c>Draft</c>.</remarks>
+            <param name="id">ID do pedido.</param>
+            <param name="itemId">ID do item do pedido a remover.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="204">Item removido.</response>
+            <response code="404">Pedido ou item não encontrado.</response>
+            <response code="422">Pedido não está em rascunho.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.Submit(System.Guid,System.Threading.CancellationToken)">
+            <summary>Envia o pedido para a cozinha.</summary>
+            <remarks>
+            Transição de status: <c>Draft → Pending</c>.
+            Após o envio, a cozinha é notificada via Supabase Realtime.
+            O pedido precisa ter ao menos um item.
+            </remarks>
+            <param name="id">ID do pedido.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="204">Pedido enviado para a cozinha.</response>
+            <response code="404">Pedido não encontrado.</response>
+            <response code="422">Pedido vazio ou status inválido para envio.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.UpdateStatus(System.Guid,RestaurantOrders.Application.Orders.Commands.UpdateOrderStatus.UpdateOrderStatusCommand,System.Threading.CancellationToken)">
+             <summary>Avança o status do pedido (uso da cozinha / gerente).</summary>
+             <remarks>
+             Transições permitidas:
+             <br/>• <c>Pending → Confirmed</c>
+             <br/>• <c>Confirmed → Preparing</c>
+             <br/>• <c>Preparing → Ready</c>
+             <br/>• <c>Ready → Delivered</c>
+             <br/>• Qualquer status (exceto Delivered) → <c>Cancelled</c>
+            
+             Requer token JWT de usuário autenticado (cozinheiro ou gerente).
+             </remarks>
+             <param name="id">ID do pedido.</param>
+             <param name="command">Novo status desejado.</param>
+             <param name="ct">Token de cancelamento.</param>
+             <response code="204">Status atualizado.</response>
+             <response code="400">Novo status inválido.</response>
+             <response code="401">Token JWT ausente ou inválido.</response>
+             <response code="404">Pedido não encontrado.</response>
+             <response code="422">Transição de status não permitida.</response>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.OrdersController.Cancel(System.Guid,System.Threading.CancellationToken)">
+            <summary>Cancela um pedido.</summary>
+            <remarks>
+            Permitido em qualquer status exceto <c>Delivered</c> e <c>Cancelled</c>.
+            </remarks>
+            <param name="id">ID do pedido.</param>
+            <param name="ct">Token de cancelamento.</param>
+            <response code="204">Pedido cancelado.</response>
+            <response code="404">Pedido não encontrado.</response>
+            <response code="422">Pedido já entregue ou cancelado.</response>
+        </member>
+        <member name="T:RestaurantOrders.API.Controllers.RestaurantsController">
+            <summary>
+            Informações gerais do restaurante.
+            </summary>
+            <remarks>
+            Endpoints adicionais (criação, atualização) serão implementados conforme necessário.
+            </remarks>
+        </member>
+        <member name="T:RestaurantOrders.API.Controllers.TablesController">
+            <summary>
+            Resolução de mesa a partir do token gerado pelo QR Code.
+            </summary>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.TablesController.#ctor(MediatR.IMediator)">
+            <summary>
+            Resolução de mesa a partir do token gerado pelo QR Code.
+            </summary>
+        </member>
+        <member name="M:RestaurantOrders.API.Controllers.TablesController.GetByQrCode(System.String,System.Threading.CancellationToken)">
+             <summary>Resolve a mesa pelo token do QR Code escaneado.</summary>
+             <remarks>
+             Primeiro endpoint chamado no fluxo do cliente.
+             O app lê o QR Code da mesa (que contém a URL com o token), chama este endpoint
+             e recebe o <c>tableId</c> e o <c>restaurantId</c> necessários para abrir o cardápio
+             e criar o pedido.
+            
+             <br/><br/>Exemplo de URL embutida no QR Code:
+             <br/><c>https://app.restaurante.com/mesa?token=abc123def456</c>
+             <br/><br/>Chamada correspondente:
+             <br/><c>GET /api/tables/by-qrcode/abc123def456</c>
+             </remarks>
+             <param name="token">Token único do QR Code da mesa (32 caracteres hex).</param>
+             <param name="ct">Token de cancelamento.</param>
+             <response code="200">Dados da mesa: id, número, restaurantId e token.</response>
+             <response code="404">QR Code inválido ou mesa inativa.</response>
+        </member>
+        <member name="T:RestaurantOrders.API.Models.CreateMenuItemResponse">
+            <summary>
+            Resposta ao criar um novo item no cardápio.
+            </summary>
+            <param name="MenuItemId">ID do item de cardápio recém-criado.</param>
+        </member>
+        <member name="M:RestaurantOrders.API.Models.CreateMenuItemResponse.#ctor(System.Guid)">
+            <summary>
+            Resposta ao criar um novo item no cardápio.
+            </summary>
+            <param name="MenuItemId">ID do item de cardápio recém-criado.</param>
+        </member>
+        <member name="P:RestaurantOrders.API.Models.CreateMenuItemResponse.MenuItemId">
+            <summary>ID do item de cardápio recém-criado.</summary>
+        </member>
+        <member name="T:RestaurantOrders.API.Models.CreateOrderResponse">
+            <summary>
+            Resposta ao criar um novo pedido.
+            </summary>
+            <param name="OrderId">ID do pedido recém-criado.</param>
+        </member>
+        <member name="M:RestaurantOrders.API.Models.CreateOrderResponse.#ctor(System.Guid)">
+            <summary>
+            Resposta ao criar um novo pedido.
+            </summary>
+            <param name="OrderId">ID do pedido recém-criado.</param>
+        </member>
+        <member name="P:RestaurantOrders.API.Models.CreateOrderResponse.OrderId">
+            <summary>ID do pedido recém-criado.</summary>
+        </member>
+        <member name="T:RestaurantOrders.API.Models.ErrorResponse">
+            <summary>Corpo padrão de erro retornado pela API.</summary>
+        </member>
+        <member name="P:RestaurantOrders.API.Models.ErrorResponse.Status">
+            <summary>Código HTTP do erro (ex: 400, 404, 422, 500).</summary>
+        </member>
+        <member name="P:RestaurantOrders.API.Models.ErrorResponse.Message">
+            <summary>Descrição legível do erro.</summary>
+        </member>
+        <member name="P:RestaurantOrders.API.Models.ErrorResponse.Timestamp">
+            <summary>Momento UTC em que o erro ocorreu.</summary>
+        </member>
+        <member name="T:RestaurantOrders.API.Models.UpdateAvailabilityRequest">
+            <summary>Body para atualizar a disponibilidade de um item do cardápio.</summary>
+        </member>
+        <member name="P:RestaurantOrders.API.Models.UpdateAvailabilityRequest.IsAvailable">
+            <summary><c>true</c> para habilitar o item; <c>false</c> para desabilitar.</summary>
+        </member>
+    </members>
+</doc>

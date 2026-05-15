@@ -2,16 +2,11 @@ namespace RestaurantOrders.Application.Common.Behaviors;
 
 using MediatR;
 
-/// <summary>
-/// Pipeline behavior for transaction management
-/// </summary>
+// Transações são gerenciadas pelo SaveChangesAsync do ApplicationDbContext.
+// Para transações cross-aggregate, injete IUnitOfWork e use BeginTransactionAsync.
 public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-    {
-        // TODO: Implement transaction handling
-        var response = await next();
-        return response;
-    }
+    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+        => next();
 }

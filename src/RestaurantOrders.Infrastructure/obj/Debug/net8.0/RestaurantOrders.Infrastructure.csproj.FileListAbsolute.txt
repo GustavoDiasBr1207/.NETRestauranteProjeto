@@ -4,3 +4,16 @@
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.AssemblyInfo.cs
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.csproj.CoreCompileInputs.cache
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.sourcelink.json
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Infrastructure.deps.json
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Infrastructure.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Infrastructure.pdb
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Application.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Domain.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Domain.pdb
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Application.pdb
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/Restaura.0265D24E.Up2Date
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/refint/RestaurantOrders.Infrastructure.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/RestaurantOrders.Infrastructure.pdb
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/obj/Debug/net8.0/ref/RestaurantOrders.Infrastructure.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/src/RestaurantOrders.Infrastructure/bin/Debug/net8.0/RestaurantOrders.Application.xml

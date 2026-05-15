@@ -4,25 +4,26 @@ using AutoMapper;
 using RestaurantOrders.Domain.Entities;
 using RestaurantOrders.Application.Common.DTOs;
 
-/// <summary>
-/// AutoMapper profile for mapping entities to DTOs
-/// </summary>
 public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        // Order mappings
         CreateMap<Order, OrderDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.PlacedAt, opt => opt.MapFrom(src => src.SubmittedAt ?? src.CreatedAt));
-        
-        CreateMap<OrderItem, OrderItemDto>();
-        
-        // Menu mappings
+            .ForMember(d => d.Status,      o => o.MapFrom(s => s.Status.ToString()))
+            .ForMember(d => d.TotalAmount, o => o.MapFrom(s => s.TotalAmount.Amount))
+            .ForMember(d => d.Currency,    o => o.MapFrom(s => s.TotalAmount.Currency));
+
+        CreateMap<OrderItem, OrderItemDto>()
+            .ForMember(d => d.MenuItemName, o => o.MapFrom(s => s.Name))
+            .ForMember(d => d.UnitPrice,    o => o.MapFrom(s => s.UnitPrice.Amount))
+            .ForMember(d => d.Subtotal,     o => o.MapFrom(s => s.Subtotal.Amount));
+
         CreateMap<MenuCategory, MenuCategoryDto>();
-        CreateMap<MenuItem, MenuItemDto>();
-        
-        // Table mappings
-        CreateMap<Table, TableDto>();
+
+        CreateMap<MenuItem, MenuItemDto>()
+            .ForMember(d => d.Price, o => o.MapFrom(s => s.Price.Amount));
+
+        CreateMap<Table, TableDto>()
+            .ForMember(d => d.QrCodeToken, o => o.MapFrom(s => s.QrCode.Token));
     }
 }

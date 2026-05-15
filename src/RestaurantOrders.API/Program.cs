@@ -7,35 +7,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
 builder.Services.AddControllers();
 builder.Services.AddSwagger();
-builder.Services.AddAuth();
+builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+    options.AddPolicy("AllowAll", p =>
+        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+// Swagger sempre disponível — restrinja por ambiente ou autenticação se necessário
+app.UseSwaggerWithUI();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.UseMiddleware<RequestLoggingMiddleware>();   // ← logging primeiro
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

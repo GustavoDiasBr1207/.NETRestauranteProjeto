@@ -100,3 +100,6 @@
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Domain.Tests/obj/Debug/net8.0/RestaurantOrders.Domain.Tests.pdb
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Domain.Tests/obj/Debug/net8.0/RestaurantOrders.Domain.Tests.genruntimeconfig.cache
 /home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Domain.Tests/obj/Debug/net8.0/ref/RestaurantOrders.Domain.Tests.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Domain.Tests/bin/Debug/net8.0/MediatR.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Domain.Tests/bin/Debug/net8.0/MediatR.Contracts.dll
+/home/gustavodias/projetosvscode/ProjetoRestaurante/.NETRestauranteProjeto/tests/RestaurantOrders.Domain.Tests/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll

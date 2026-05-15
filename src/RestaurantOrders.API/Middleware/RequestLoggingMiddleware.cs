@@ -1,20 +1,21 @@
 namespace RestaurantOrders.API.Middleware;
 
-/// <summary>
-/// Middleware for logging requests and responses
-/// </summary>
-public class RequestLoggingMiddleware
+using System.Diagnostics;
+
+public class RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    
-    public RequestLoggingMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-    
     public async Task InvokeAsync(HttpContext context)
     {
-        // TODO: Implement request logging (method, path, status, duration)
-        await _next(context);
+        var sw = Stopwatch.StartNew();
+
+        await next(context);
+
+        sw.Stop();
+        logger.LogInformation(
+            "{Method} {Path} → {Status} ({Ms}ms)",
+            context.Request.Method,
+            context.Request.Path,
+            context.Response.StatusCode,
+            sw.ElapsedMilliseconds);
     }
 }

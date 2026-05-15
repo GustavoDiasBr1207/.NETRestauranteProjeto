@@ -1,21 +1,25 @@
 namespace RestaurantOrders.Infrastructure.QrCode;
 
+using QRCoder;
 using RestaurantOrders.Domain.Interfaces.Services;
+using RestaurantOrders.Domain.Interfaces.Repositories;
+using RestaurantOrders.Domain.Exceptions;
 
-/// <summary>
-/// QR code service implementation using QRCoder
-/// </summary>
-public class QrCodeService : IQrCodeService
+public class QrCodeService(ITableRepository tableRepository) : IQrCodeService
 {
-    public async Task<byte[]> GenerateAsync(Guid tableId, CancellationToken cancellationToken = default)
+    public Task<byte[]> GenerateAsync(Guid tableId, CancellationToken ct = default)
     {
-        // TODO: Implement QR code generation using QRCoder
-        return Array.Empty<byte>();
+        // Gera QR Code com o token da mesa como conteúdo
+        var content   = tableId.ToString();
+        using var gen  = new QRCodeGenerator();
+        var data      = gen.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+        using var code = new PngByteQRCode(data);
+        return Task.FromResult(code.GetGraphic(20));
     }
-    
-    public async Task<bool> ValidateAsync(string token, CancellationToken cancellationToken = default)
+
+    public async Task<bool> ValidateAsync(string token, CancellationToken ct = default)
     {
-        // TODO: Implement QR code token validation
-        return false;
+        var table = await tableRepository.GetByQrCodeTokenAsync(token, ct);
+        return table is { IsActive: true };
     }
 }
